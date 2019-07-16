@@ -1,0 +1,13 @@
+documentation/tech_details.aux
+documentation/tech_details.bbl
+documentation/tech_details.blg
+documentation/tech_details.brf
+documentation/tech_details.log
+documentation/tech_details.out
+documentation/tech_details.out.bak
+documentation/tech_details.pdf
+documentation/tech_details.synctex.gz
+documentation/tech_details.tex.bak
+bin/*.*
+obj/*.*
+results/*.*
