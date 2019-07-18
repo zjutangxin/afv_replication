@@ -8,6 +8,16 @@ documentation/tech_details.out.bak
 documentation/tech_details.pdf
 documentation/tech_details.synctex.gz
 documentation/tech_details.tex.bak
+documentation/tech_details_cn.aux
+documentation/tech_details_cn.bbl
+documentation/tech_details_cn.blg
+documentation/tech_details_cn.brf
+documentation/tech_details_cn.log
+documentation/tech_details_cn.out
+documentation/tech_details_cn.out.bak
+documentation/tech_details_cn.pdf
+documentation/tech_details_cn.synctex.gz
+documentation/tech_details_cn.tex.bak
 bin/*.*
 obj/*.*
 results/*.*

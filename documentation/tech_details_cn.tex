@@ -1,0 +1,412 @@
+\documentclass[hyperref,winfonts,11pt]{ctexart}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    Text Layout                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page Layout
+%\pagestyle{plain}
+\usepackage[hmargin={1.2in,1.2in},vmargin={1.5in,1.5in}]{geometry}
+%\usepackage[hmargin={1in,1in},vmargin={1in,1in}]{geometry}
+%\usepackage{indentfirst}
+\topmargin -1cm        % read Lamport p.163
+\oddsidemargin -0.04cm   % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm
+\parskip 0.5em
+\parindent 1em
+\renewcommand\baselinestretch{1.15}
+
+\renewcommand{\rmdefault}{ptm}
+%\usepackage[scaled=0.88]{helvet}
+\makeatletter   % Roman Numbers
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    Figures and Tables                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[dvipsnames]{xcolor}
+\usepackage{multirow,threeparttable,booktabs}
+\usepackage[capposition=top]{floatrow} % For Figure Notes
+\usepackage{graphicx,pstricks,epstopdf}
+%\usepackage[space]{grffile}
+\usepackage[font={sc,small}]{caption}
+\captionsetup[table]{labelsep=newline,labelfont={it,color=blue}}
+\floatsetup[figure]{capposition=bottom}
+\DeclareCaptionLabelSeparator{ecta}{.---}
+\captionsetup[figure]{labelsep=ecta, font=it,labelfont={it,color=blue}}
+\captionsetup[lstlisting]{labelsep=ecta, font={sc}, labelfont={it,color=blue}}
+
+%% Header and Footer
+%\usepackage{fancyhdr}
+%\fancypagestyle{myfront}{
+%\fancyhf{}
+%\renewcommand{\headrulewidth}{0pt}
+%\renewcommand{\footrulewidth}{0pt}
+%\cfoot{\thepage}}
+%
+%\fancypagestyle{mymain}{
+%\fancyhead{}
+%\fancyhead[LO]{\it \rightmark}
+%\fancyhead[RE]{\it \leftmark}
+%\cfoot{\thepage}
+%\renewcommand{\headrulewidth}{0pt}}
+%
+%\fancypagestyle{mynosection}{
+%\fancyhead{}
+%\fancyhead[LO]{\it \leftmark}
+%\fancyhead[RE]{\it \leftmark}
+%\cfoot{\thepage}
+%\renewcommand{\headrulewidth}{0pt}}
+\interfootnotelinepenalty=10000
+
+% Citations and Cross-references
+\usepackage[authoryear,comma]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{0em}
+\hypersetup{%dvipdfmx,%
+            bookmarks=true,%
+            pdfstartview=FitH,%
+            breaklinks=true,%
+            colorlinks=true,%
+            allcolors=black,%
+            citecolor=blue,
+            linkcolor=red,
+            pagebackref=true}
+%\usepackage{bookmark}
+
+% Functional Package
+\usepackage{enumerate}
+\usepackage{url}      % This package helps to typeset urls
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    Mathematics                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathrsfs,siunitx,bm,upgreek}
+\renewcommand{\vec}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\gvec}[1]{{\boldsymbol{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             Computer Code Verbatim                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage[numbered,framed]{mcode}
+\usepackage{listings,textcomp,upquote}
+\lstset{
+     language=[95]fortran,
+     frame = single,
+%     backgroundcolor=\color[RGB]{255,228,202}, % pink
+     backgroundcolor=\color[RGB]{231,240,233}, % green
+%     backgroundcolor=\color[RGB]{239,240,248},
+     framerule=0pt,
+     showstringspaces=false,
+     basicstyle=\ttfamily\footnotesize,
+     numbers=left,
+     stepnumber=1,
+     numberstyle=\tiny,
+     keywordstyle=\color{blue}\ttfamily,
+     stringstyle=\color[rgb]{.627,.126,.941}\ttfamily,
+     commentstyle=\color[rgb]{.133,.545,.133}\ttfamily,
+     morecomment=[l][\color{magenta}]{\#},
+     fontadjust,
+     captionpos=t,
+     framextopmargin=2pt,framexbottommargin=2pt,
+     abovecaptionskip=4ex,belowcaptionskip=3pt,
+     belowskip=3pt,
+     framexleftmargin=4pt,
+     xleftmargin=4em,xrightmargin=4em,
+     texcl=true,
+     extendedchars=false,columns=flexible,mathescape=true,
+     captionpos=b,
+}
+\renewcommand{\lstlistingname}{代码}
+\renewcommand\lstlistlistingname{代码一览}
+\renewcommand\listtablename{表格一览}
+\renewcommand\listfigurename{插图一览}
+
+% New Environments
+%\newtheorem{result}{结果}[chapter]
+\newtheorem{definition}{定义}
+%\newtheorem{theorem}{定理}[chapter]
+\newtheorem{lemma}{引理}
+%\newtheorem{corollary}[theorem]{推论}
+\newtheorem{proposition}{命题}
+%\newtheorem{assumption}{假设}[chapter]
+%\newtheorem{example}{例子}[chapter]
+\newcommand{\code}{\texttt}
+\newcommand{\vecb}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\bcode}[1]{\texttt{\blue{#1}}}
+\newcommand{\rcode}[1]{\texttt{\red{#1}}}
+\newcommand{\kterm}{\textit}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\aeeq}{\stackrel{a.e.}{=}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\plim}{plim}
+\renewcommand{\vec}[1]{\ensuremath{\bm{#1}}}
+\makeatletter
+\newcommand{\distas}[1]{\mathbin{\overset{#1}{\kern\z@\sim}}}%
+\newsavebox{\mybox}\newsavebox{\mysim}
+\newcommand{\xSim}[1]{%
+  \savebox{\mybox}{\hbox{\kern3pt$\scriptstyle#1$\kern3pt}}%
+  \savebox{\mysim}{\hbox{$\sim$}}%
+  \mathbin{\overset{#1}{\kern\z@\resizebox{\wd\mybox}{\ht\mysim}{$\sim$}}}%
+}
+%\newcommand{\aseq}[1]{%
+%  \savebox{\mybox}{\hbox{\kern3pt$\scriptstyle#1$\kern3pt}}%
+%  \savebox{\mysim}{\hbox{$=$}}%
+%  \mathbin{\overset{#1}{\kern\z@\resizebox{\wd\mybox}{\ht\mysim}{$=$}}}%
+%}
+\makeatother
+% Footnote
+\usepackage{pifont}
+\usepackage[perpage]{footmisc}  % 每一页的脚注要重新编号
+\renewcommand{\thefootnote}{\normalsize{\ding{\numexpr171+\value{footnote}}}}
+%\renewcommand{\thefootnote}{\textcircled{\tiny\arabic{footnote}}}
+\newcommand{\cfoot}[1]{\hspace{-5pt}{\footnote{#1}}}
+%\newcommand{\kcode}[1]{\blue{\texttt{#1}}}
+
+\title{\textbf{求解Financial Globalization, Inequality, and the Rising Public Debt}}
+\author{\normalsize{\fangsong{汤昕}}\thanks{国际货币基金组织，700 19th St NW，美国华盛顿特区，邮编：20431，电子邮件：zjutangxin@gmail.com。}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+这份笔记包含了求解Financial Globalization, Inequality, and the Rising Public Debt中模型的重要技术细节。第一节包含了模型设置、均衡定义和求解，第二节包含了伪代码。
+
+\section{模型设置与求解}
+
+\subsection{模型设置}
+
+由于需要求解\textit{时间一致(time-consistent)}的子博弈精炼纳什均衡，我们用$T$期的问题对无穷期问题进行近似。考虑两个对称国家，用下标$j$来标识。每个国家以及其中的行为人生存$T$期。每个国家当中，有测度为1的企业家和测度为$\Phi$的工人，两者的偏好都是对数的：
+\begin{equation*}
+    \sum_{t=0}^T \beta^t \log (c_t),
+\end{equation*}
+其中$\beta$是时间偏好。
+
+每个国家$j$当中有单位供给的土地，其价格为$p_{j,t}$且不能跨国流动，我们用$k$来代表。企业家拥有企业和土地，依照生产函数
+\begin{equation*}
+    y = F(z,k,l) = z^{\theta} k^{\theta} l^{1-\theta},
+\end{equation*}
+进行生产。其中$k$是土地，$l$是劳动，$z$是生产率冲击。我们假设$t$期的$k_t$是在$t-1$期决定的，企业家选择雇佣劳动的时候$z$的值已知。设$z$是i.i.d且离散的，其支撑集和概率密度分别为$\{z_1,\cdots,z_l\}$和\\$\{\mu_1, \cdots, \mu_l\}$。进一步的，我们假设土地的回报除了企业的生产利润之外，还有资本利得
+\begin{equation}
+\label{eq:capitalgains}
+    \left(\frac{z-\overline{z}}{\overline{z}}\right) p_{j,t}k,
+\end{equation}
+其中$\overline{z}$是$z$的均值。
+
+注意到土地实际上是一种风险资产，下面我们来验证对于企业家$i$而言，土地的回报率关于土地规模是线性的。我们记均衡工资为$w_{j,t}$。
+\begin{lemma}
+\label{lemma:linearity}
+对企业家$i$而言，其劳动需求$l^i$和资产回报率$A(z^i,w_t)$关于$k^i$均为线性：
+\begin{equation}
+\label{eq:labordemand}
+    l^i = \left(\frac{1-\theta}{w_t} \right)^{\frac{1}{\theta}}z^i k^i \triangleq l(z^i,w_t) k^i,
+\end{equation}
+和
+\begin{equation*}    
+    R_f^i = \left[ z^\theta l(z^i,w_t)^{1-\theta} - wl(z^i,w_t) + \left(\frac{z-\overline{z}}{\overline{z}}\right) p_{t} \right]k^i \triangleq A(z^i,w_t)k^i,
+\end{equation*}
+其中我们省略了国家的标识$j$。
+\end{lemma}
+\begin{proof}
+证明是直观的。注意到由于对$t$期企业家而言，$k^i$是一个状态变量，所以此时企业家只有劳动需求一个选择变量。于是企业家的一阶条件成为
+\begin{equation*}
+    (1-\theta)(z^i)^{\theta}(k^i/l^i)^{\theta} = w_t,
+\end{equation*}
+稍加整理之后立刻得到(\ref{eq:labordemand})式
+\begin{equation*}
+    l^i = \left(\frac{1-\theta}{w_t} \right)^{\frac{1}{\theta}}z^i k^i \triangleq l(z^i,w_t) k^i.
+\end{equation*}
+下面计算风险资产的回报，首先我们把劳动需求(\ref{eq:labordemand})带入利润$\pi^i = y^i - w_t l^i$，得到
+\begin{align*}
+    \pi^i &= z^{\theta}(k^i)^{\theta}l(z^i,w_t)^{1-\theta}(k^i)^{1-\theta} - w_t l(z^i,w_t) k^i \\
+          &= [z^{\theta}l(z^i,w_t)^{1-\theta} - w_t l(z^i,w_t)]k^i.
+\end{align*}
+由于资本利得关于$k^i$也是线性的，将上式与(\ref{eq:capitalgains})式相加，立刻得到资本回报率
+\begin{equation*}
+    A(z^i,w_t) = \left[ z^\theta l(z^i,w_t)^{1-\theta} - wl(z^i,w_t) + \left(\frac{z-\overline{z}}{\overline{z}}\right) p_{t} \right].
+\end{equation*}
+于是引理得证。
+\end{proof}
+在土地之外，企业家还可以购买政府发放的无风险公债$b^i_{j,t+1}$，利率为$R_{j,t}$。我们假设公债可以跨国自由流动。若令总额转移支付为$\tau_{j,t}$，那么企业家的预算约束为
+\begin{equation*}
+    c^i_{j,t} + p_{j,t}k^i_{j,t+1} + \frac{b^i_{j,t+1}}{R_{j,t}} = A(z^i_{j,t},w_{j,t})k^i_{j,t} + p_{j,t}k^i_{j,t} + b^i_{j,t} + \tau_{j,t}.
+\end{equation*}
+
+每个工人每一期无弹性供给$1/\Phi$单位劳动。工人无法在金融市场上进行借贷，于是工人的预算约束为：
+\begin{equation*}
+    c^w_{j,t} = w_{j,t}\left(\frac{1}{\Phi}\right) + \tau_{j,t}.
+\end{equation*}
+
+我们假设政府是功利主义的，其最大化本国国民的效用。由于此时政府间存在动态策略性行为，本国政府本期公债的具体效用受到其他国家发放规模的影响。若记当前各国的债务总额为$\vec{B}_t = (B_{1,t}, \cdots, B_{J,t})$，那么$j$ 国政府的目标函数为
+\begin{equation*}
+    \max_{B_{j,t+1}} \left\{\Phi W_{j,t}(\vec{B}_t,\vec{B}_{t+1}) + \int_i v^i_{j,t}(\vec{B}_t,\vec{B}_{t+1})di \right\},
+\end{equation*}
+其中$W_{j,t}$是工人的间接效用，$v^i_{j,t}$是企业家$i$的间接效用。而政府的预算约束为
+\begin{equation}
+\label{eq:govbalance}
+    (1+\Phi)\tau_{j,t} + B_{j,t} = \frac{B_{j,t+1}}{R_{j,t}}.
+\end{equation}
+
+有了上面的设定，下面我们写出封闭经济和开放经济下政治经济均衡的定义。我们先从封闭经济入手，为简化记号，我们省略国家的下标$j$。
+\begin{definition}
+（封闭经济）封闭经济中的政治经济均衡是政府公债序列$\{B_t\}_{t=0}^T, B_{T+1} = 0$，价格序列$\{w_t,p_t,R_t\}_{t=0}^T$，企业家的决策函数$\{c^i_t,l^i_t,k^i_{t+1},b^i_{t+1}\}_{t=1}^T$，工人消费序列$\{c^w_t\}_{t=1}^T$和转移支付$\tau_t$使得
+\begin{enumerate}[(i)]
+    \item
+    给定$\{B_{t}\}_{t=0}^{T+1}$和$\{w_t,p_t,R_t\}_{t=0}^T$，$\{c^i_t,l^i_t,k^i_{t+1},b^i_{t+1}\}_{t=1}^T$和$\{c^w_t\}_{t=1}^T$分别为企业家和工人最优化问题的解。
+    \item
+    给定$\{B_{t}\}_{t=0}^{T+1}$，价格序列使得市场出清：
+    \begin{itemize}
+        \item
+        劳动市场：
+        \begin{equation*}
+            \int_i l^i_t di = 1.
+        \end{equation*}
+        \item
+        土地市场：
+        \begin{equation*}
+            \int_i k^i_{t+1} di = 1.
+        \end{equation*}     
+        \item
+        国内债券市场：
+        \begin{equation*}
+            \int_i b^i_{t+1} di = B_{t+1}.
+        \end{equation*}                
+    \end{itemize}
+    \item
+    公债序列$\{B_{t}\}_{t=0}^{T+1}$是政府最优化问题的时间一致解
+    \begin{equation*}
+        \max_{B_{t+1}} \left\{\Phi W_t(B_t,B_{t+1}) + \int_i v^i_t(B_t,B_{t+1}) \right\},
+    \end{equation*}
+    且政府预算约束(\ref{eq:govbalance})成立。
+\end{enumerate}
+\end{definition}
+
+开放经济中的均衡可以类似定义，此时我们保持国家的下标$j$。
+\begin{definition}
+（开放经济）开放经济中的政治经济均衡是政府公债序列$\{B_{j,t}\}_{t=0}^T, B_{j,T+1} = 0$，价格序列$\{w_{j,t},p_{j,t},R_{t}\}_{t=0}^T$，企业家的决策函数$\{c^i_{j,t},l^i_{j,t},k^i_{j,t+1},b^i_{j,t+1}\}_{t=1}^T$，工人消费序列$\{c^w_{j,t}\}_{t=1}^T$ 和转移支付$\tau_{j,t}$使得
+\begin{enumerate}[(i)]
+    \item
+    给定$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$和$\{w_{j,t},p_{j,t},R_{t}\}_{t=0}^T$，$\{c^i_{j,t},l^i_{j,t},k^i_{j,t+1},b^i_{j,t+1}\}_{t=1}^T$和$\{c^w_{j,t}\}_{t=1}^T$分别为企业家和工人最优化问题的解。
+    \item
+    给定$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$，价格序列使得市场出清：
+    \begin{itemize}
+        \item
+        劳动市场：
+        \begin{equation*}
+            \int_i l^i_{j,t} di = 1.
+        \end{equation*}
+        \item
+        土地市场：
+        \begin{equation*}
+            \int_i k^i_{j,t+1} di = 1.
+        \end{equation*}
+        \item
+        国际债券市场：
+        \begin{equation*}
+            \sum_{j=1}^J \int_i b^i_{j,t+1} di = \sum_{j=1}^J B_{j,t+1}.
+        \end{equation*}
+    \end{itemize}
+    \item
+    公债序列$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$是政府最优化问题的子博弈精炼纳什均衡解
+    \begin{equation*}
+        \max_{B_{j,t+1}} \left\{\Phi W_{j,t}(\vec{B}_t,\vec{B}_{t+1}) + \int_i v^i_{j,t}(\vec{B}_t,\vec{B}_{t+1}) \right\},
+    \end{equation*}
+    且政府预算约束(\ref{eq:govbalance})成立。
+\end{enumerate}
+\end{definition}
+
+\subsection{求解均衡}
+
+由模型的假设，封闭经济和开放经济中的竞争均衡都存在解析解。为此，我们需要给出对于任给的公债序列$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$，价格序列、企业家以及工人决策函数的表达式。注意到由于政府预算约束(\ref{eq:govbalance})总是成立，我们可以在企业家的预算约束当中消去总额税。为此，定义超额债券需求为
+\begin{equation*}
+    \tilde{b}^i_{j,t} = b^i_{j,t} - \frac{B_{j,t}}{1+\Phi}.
+\end{equation*}
+将上式带入企业家的预算约束，我们得到
+\begin{equation*}
+    c^i_{j,t} + p_{j,t}k^i_{j,t+1} + \frac{\tilde{b}^i_{j,t+1}}{R_{j,t}} = A(z^i_{j,t},w_{j,t})k^i_{j,t} + p_{j,t}k^i_{j,t} + \tilde{b}^i_{j,t}.
+\end{equation*}
+从此开始，我们总是使用$\tilde{b}^i_{j,t}$。那么，企业家的序列问题成为
+\begin{align}
+\label{eq:entrepreneur}
+    & \max_{\{c_t,\tilde{b}_{t+1},k_{t+1}\}} \E_0\sum_{t=0}^T \beta^t \log c_t, \nonumber \\
+    & s.t. \nonumber \\
+    & \qquad c^i_{j,t} + p_{j,t}k^i_{j,t+1} + \frac{\tilde{b}^i_{j,t+1}}{R_{j,t}} = A(z^i_{j,t},w_{j,t})k^i_{j,t} + p_{j,t}k^i_{j,t} + \tilde{b}^i_{j,t}.
+\end{align}
+注意到，由引理\ref{lemma:linearity}，优化问题(\ref{eq:entrepreneur})实际上是经典的\citet{Samuelson:1969}生命周期中的资产组合问题。由\citet{Samuelson:1969}，企业家的问题可以分解为期内的最优资产组合问题和跨期的消费储蓄问题，两者相互独立。具体来说，我们证明下面的命题。
+\begin{proposition}
+（生命周期中的资产组合问题）给定价格序列$\{w_t,p_t,R_t\}_{t=1}^T$，若定义企业家的可支配财富
+\begin{equation*}
+    a^i_t = A(z^i_t,w_t)k^i_t + p_t k^i_t + \tilde{b}^i_t,
+\end{equation*}
+那么企业家的消费储蓄与资产组合关于$a^i_t$都是线性的。具体的，若记$\eta_t$为储蓄率，$\phi_t$为储蓄中风险资产的份额，那么
+\begin{equation*}
+    \eta_t = \frac{\beta}{1+\beta^{T-t}/(\sum_{s=1}^{T-t}\beta^{s-1})},\quad \E_t \left\{\frac{R_t}{\left[\frac{A(z^i_{t+1},w_{t+1})+p_{t+1}}{p_t} \right]\phi_t + R_t(1-\phi_t)} \right\} = 1.
+\end{equation*}
+这意味了
+\begin{align*}
+    c^i_t &= (1-\eta_t)a^i_t, \\
+    p_t k^i_{t+1} &= \phi_t \eta_t a^i_j, \\
+    \frac{\tilde{b}^i_{t+1}}{R_t} &= (1-\phi_t)\eta_t a^i_t.
+\end{align*}
+\end{proposition}
+\begin{proof}
+下面我们应用数学归纳法来证明上面的命题。为简化记号，我们用
+\begin{equation*}
+    Z^i_{t+1} = \frac{A(z^i_{t+1},w_{t+1})+p_{t+1}}{p_t},
+\end{equation*}
+代表风险资产的回报。现在由$a^i_t$的定义，我们有
+\begin{equation}
+\label{eq:aprime}
+    a^i_{t+1} = [Z^i_{t+1} \phi_t + R_t(1-\phi_t)]\eta_t a_t^i.
+\end{equation}
+企业家问题对应的拉格朗日函数此时是
+\begin{equation*}
+    \mathcal{L} = \E_0 \sum_{t=0}^T \beta^t\left\{\log c_t + \lambda_t \left[ A(z_t,w_t)k_t + p_t k_t + \tilde{b}_t - c_t - p_t k_{t+1} - \frac{1}{R_t}\tilde{b}_{t+1} \right] \right\}.
+\end{equation*}
+对应了一阶条件为
+\begin{align}
+\label{eq:foc_c}
+    (c_t): \quad & \frac{1}{c_t} = \lambda_t, \\
+\label{eq:foc_k}
+    (k_{t+1}): \quad & \lambda_t = \beta \E_t [\lambda_{t+1}Z_{t+1}], \\
+\label{eq:foc_b}    
+    (\tilde{b}_{t+1}): \quad & \lambda_t = \beta R_t \E_t [\lambda_{t+1}].
+\end{align}
+将方程(\ref{eq:foc_k})和(\ref{eq:foc_b})分别与(\ref{eq:foc_c})合并，再带入(\ref{eq:aprime})，我们得到
+\begin{align}
+\label{eq:risky_land}
+    \frac{\eta_t}{1-\eta_t} &= \beta \E_t\left\{\frac{R_t}{(1-\eta_{t+1})[Z_{t+1}\phi_t + (1-\phi_t)R_t]} \right\}, \\
+\label{eq:risky_bond}    
+    \frac{\eta_t}{1-\eta_t} &= \beta \E_t\left\{\frac{Z_t}{(1-\eta_{t+1})[Z_{t+1}\phi_t + (1-\phi_t)R_t]} \right\}.
+\end{align}
+将上面两式按照$\phi_t$加权平均，得到
+\begin{equation*}
+    \frac{\eta_t}{1-\eta_t} = \beta \E_t\left[\frac{1}{1-\eta_{t_1}} \right] = \frac{\beta}{1-\eta_{t+1}}.
+\end{equation*}
+带入终末期条件$\eta_T = 0$，我们有
+\begin{equation*}
+    \eta_{T-1} = \frac{\beta}{1+\beta}.
+\end{equation*}
+继续迭代，得到
+\begin{equation*}
+    \eta_{T-2} = \frac{\beta + \beta^2}{1+\beta+\beta^2}.
+\end{equation*}
+于是应用数学归纳法，我们得到通项公式
+\begin{equation*}
+    \eta_t = \frac{\beta(1-\beta^{T-t})}{1-\beta^{T-t+1}}.
+\end{equation*}
+将上式带回(\ref{eq:risky_land})(\ref{eq:risky_bond})两式，立刻得到风险资产比例的两个等价表达式
+\begin{equation*}
+    \E_t \left[\frac{Z_{t+1}}{Z_{t+1}\phi_t + (1-\phi_t)R_t} \right] = \E_t \left[\frac{R_t}{Z_{t+1}\phi_t + (1-\phi_t)R_t} \right] = 1.
+\end{equation*}
+\end{proof}
+
+\section{伪代码}
+
+
+\bibliography{D:/Dissertation/Literature/Dissertation1}
+\bibliographystyle{aea}
+\end{document}
