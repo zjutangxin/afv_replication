@@ -143,7 +143,6 @@
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator*{\plim}{plim}
-\renewcommand{\vec}[1]{\ensuremath{\bm{#1}}}
 \makeatletter
 \newcommand{\distas}[1]{\mathbin{\overset{#1}{\kern\z@\sim}}}%
 \newsavebox{\mybox}\newsavebox{\mysim}
@@ -205,7 +204,7 @@
     l^i = \left(\frac{1-\theta}{w_t} \right)^{\frac{1}{\theta}}z^i k^i \triangleq l(z^i,w_t) k^i,
 \end{equation}
 和
-\begin{equation*}    
+\begin{equation*}
     R_f^i = \left[ z^\theta l(z^i,w_t)^{1-\theta} - wl(z^i,w_t) + \left(\frac{z-\overline{z}}{\overline{z}}\right) p_{t} \right]k^i \triangleq A(z^i,w_t)k^i,
 \end{equation*}
 其中我们省略了国家的标识$j$。
@@ -268,12 +267,12 @@
         土地市场：
         \begin{equation*}
             \int_i k^i_{t+1} di = 1.
-        \end{equation*}     
+        \end{equation*}
         \item
         国内债券市场：
         \begin{equation*}
             \int_i b^i_{t+1} di = B_{t+1}.
-        \end{equation*}                
+        \end{equation*}
     \end{itemize}
     \item
     公债序列$\{B_{t}\}_{t=0}^{T+1}$是政府最优化问题的时间一致解
@@ -337,6 +336,7 @@
 \end{align}
 注意到，由引理\ref{lemma:linearity}，优化问题(\ref{eq:entrepreneur})实际上是经典的\citet{Samuelson:1969}生命周期中的资产组合问题。由\citet{Samuelson:1969}，企业家的问题可以分解为期内的最优资产组合问题和跨期的消费储蓄问题，两者相互独立。具体来说，我们证明下面的命题。
 \begin{proposition}
+\label{prop:samuelson}
 （生命周期中的资产组合问题）给定价格序列$\{w_t,p_t,R_t\}_{t=1}^T$，若定义企业家的可支配财富
 \begin{equation*}
     a^i_t = A(z^i_t,w_t)k^i_t + p_t k^i_t + \tilde{b}^i_t,
@@ -346,11 +346,14 @@
     \eta_t = \frac{\beta}{1+\beta^{T-t}/(\sum_{s=1}^{T-t}\beta^{s-1})},\quad \E_t \left\{\frac{R_t}{\left[\frac{A(z^i_{t+1},w_{t+1})+p_{t+1}}{p_t} \right]\phi_t + R_t(1-\phi_t)} \right\} = 1.
 \end{equation*}
 这意味了
-\begin{align*}
-    c^i_t &= (1-\eta_t)a^i_t, \\
+\begin{align}
+\label{eq:cons_entre}
+    c^i_t &= (1-\eta_t)a^i_t \\
+\label{eq:risky}    
     p_t k^i_{t+1} &= \phi_t \eta_t a^i_j, \\
+\label{eq:riskfree}        
     \frac{\tilde{b}^i_{t+1}}{R_t} &= (1-\phi_t)\eta_t a^i_t.
-\end{align*}
+\end{align}
 \end{proposition}
 \begin{proof}
 下面我们应用数学归纳法来证明上面的命题。为简化记号，我们用
@@ -372,14 +375,14 @@
     (c_t): \quad & \frac{1}{c_t} = \lambda_t, \\
 \label{eq:foc_k}
     (k_{t+1}): \quad & \lambda_t = \beta \E_t [\lambda_{t+1}Z_{t+1}], \\
-\label{eq:foc_b}    
+\label{eq:foc_b}
     (\tilde{b}_{t+1}): \quad & \lambda_t = \beta R_t \E_t [\lambda_{t+1}].
 \end{align}
 将方程(\ref{eq:foc_k})和(\ref{eq:foc_b})分别与(\ref{eq:foc_c})合并，再带入(\ref{eq:aprime})，我们得到
 \begin{align}
 \label{eq:risky_land}
     \frac{\eta_t}{1-\eta_t} &= \beta \E_t\left\{\frac{R_t}{(1-\eta_{t+1})[Z_{t+1}\phi_t + (1-\phi_t)R_t]} \right\}, \\
-\label{eq:risky_bond}    
+\label{eq:risky_bond}
     \frac{\eta_t}{1-\eta_t} &= \beta \E_t\left\{\frac{Z_t}{(1-\eta_{t+1})[Z_{t+1}\phi_t + (1-\phi_t)R_t]} \right\}.
 \end{align}
 将上面两式按照$\phi_t$加权平均，得到
@@ -403,6 +406,116 @@
     \E_t \left[\frac{Z_{t+1}}{Z_{t+1}\phi_t + (1-\phi_t)R_t} \right] = \E_t \left[\frac{R_t}{Z_{t+1}\phi_t + (1-\phi_t)R_t} \right] = 1.
 \end{equation*}
 \end{proof}
+
+下面我们刻画给定政府债序列时，竞争均衡的价格序列。我们记加总的公债超额需求为$\tilde{b}_{j,t} = \int_i \tilde{b}^i_{j,t}di$。为简化记号，我们省略国家的下标$j$。
+\begin{proposition}
+\label{prop:competitive}
+（竞争均衡）给定公债序列$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$，均衡工资是常数$w_{j,t} = \overline{w} = (1-\theta)\overline{z}^{\theta}$，余下的价格和总消费为
+\begin{align}
+\label{eq:phi}
+    \phi_t &= \E_t\left[\frac{A(z^i_{t+1})+p_{t+1}}{A(z^i_{t+1})+p_{t+1}+\tilde{b}_{t+1}} \right], \\
+\label{eq:pt}    
+    p_t    &= \frac{\eta_t\phi_t(\overline{A}+\tilde{b}_t)}{1-\eta_t\phi_t}, \\
+\label{eq:rt}    
+    R_t    &= \frac{(1-\eta_t\phi_t)\tilde{b}_{t+1}}{\eta_t(1-\phi_t)(\overline{A}+\tilde{b}_t)}, \\
+\label{eq:cet}    
+    c^e_t  &= \overline{A}+\tilde{b}_t-\frac{\tilde{b}_{t+1}}{R_t}, \\
+\label{eq:cwt}    
+    c^w_t  &= \overline{w} + \left(\frac{\Phi}{1+\Phi} \right)\left(\frac{B_{t+1}}{R_t}-B_t \right),
+\end{align}
+其中$\overline{A} = \sum_l A(z_l)\mu_l$。
+\end{proposition}
+\begin{proof}
+下面我们用构造法进行验证。首先我们来求解均衡工资。对劳动需求函数(\ref{eq:labordemand})关于$i$积分，并利用总的劳动供给为1，我们有
+\begin{equation*}
+    \left(\frac{1-\theta}{w_t} \right)^{\frac{1}{\theta}} \int_i z^i k^i di = 1.
+\end{equation*}
+由于$z^i$和$k^i$相互独立，且$k^i$的总供给为1，上面的积分可以化简为
+\begin{equation*}
+    \left(\frac{1-\theta}{w_t} \right)^{\frac{1}{\theta}} \overline{z} = 1,
+\end{equation*}
+其中$\overline{z} = \sum_l z_l\mu_l$。容易看出，上式与时间$t$是无关的，于是我们有
+\begin{equation}
+\label{eq:wage}
+    \overline{w} = (1-\theta)\overline{z}^\theta.
+\end{equation}
+于是在后文中我们省略所有函数中的变元$w$。
+
+方程(\ref{eq:phi})实际上只是命题\ref{prop:samuelson}当中表达式
+\begin{equation}
+\label{eq:phi_alter}
+    \E_t \left[\frac{Z_{t+1}}{Z_{t+1}\phi_t + (1-\phi_t)R_t} \right] = 1,
+\end{equation}
+进行了重新整理。注意到由(\ref{eq:risky})(\ref{eq:riskfree})两式，我们得到对企业家$i$，
+\begin{equation*}
+    \frac{\phi_t}{1-\phi_t} = \frac{p_t k_{t+1}^i}{b^i_{t+1}/R_t},
+\end{equation*}
+稍加整理之后关于$i$积分，我们得到
+\begin{equation*}
+    (1-\phi_t)p_t = \phi_t \tilde{b}_{t+1}/R_t.
+\end{equation*}
+将上式带入(\ref{eq:phi_alter})，同时替换回$Z_t$的定义，我们立刻得到(\ref{eq:phi})式
+\begin{equation*}
+    \phi_t = \E_t\left[\frac{A(z^i_{t+1})+p_{t+1}}{A(z^i_{t+1})+p_{t+1}+\tilde{b}_{t+1}} \right].
+\end{equation*}
+
+方程(\ref{eq:pt})可以由土地市场出清条件求解。具体来说，由于对企业家$i$而言，土地需求为(\ref{eq:risky})，对该式关于$i$积分，同时带入土地供给为1，我们得到
+\begin{align*}
+    p_t &= \phi_t \eta_t \int_i a^i_t di \\
+        &= \phi_t \eta_t (\overline{A} + p_t + \tilde{b}_t).
+\end{align*}
+上式稍加整理，即可得到(\ref{eq:pt})
+\begin{equation*}
+    p_t = \frac{\eta_t\phi_t(\overline{A}+\tilde{b}_t)}{1-\eta_t\phi_t}.
+\end{equation*}
+
+类似的，(\ref{eq:rt})由公债市场出清条件解出。具体来说，我们对(\ref{eq:riskfree})式关于$i$积分，得到
+\begin{equation*}
+    \frac{\tilde{b}_{t+1}}{R_t} = (1-\phi_t)\eta_t(\overline{A}+p_t+\tilde{b}_t).
+\end{equation*}
+上式带入土地价格(\ref{eq:pt})，整理之后得到(\ref{eq:rt})
+\begin{equation*}
+    R_t = \frac{(1-\eta_t\phi_t)\tilde{b}_{t+1}}{\eta_t(1-\phi_t)(\overline{A}+\tilde{b}_t)}.
+\end{equation*}
+注意到，在实际计算中，我们需要在上面的式子里带入公债供给$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$。此处我们没有带入是为了能够比较一般的刻划封闭和开放经济的情形，详见后文的评注。
+
+工人和企业家的总消费的计算是容易的。对企业家而言，将()式关于$i$积分，再带入资本市场出清条件我们立刻得到(\ref{eq:cet})
+\begin{equation*}
+    c^e_t = \overline{A}+\tilde{b}_t-\frac{\tilde{b}_{t+1}}{R_t}.
+\end{equation*}
+工人的总消费只需要用政府预算约束替换掉转移支付，同时注意工人的总测度为$\Phi$，即可得到(\ref{eq:cwt})
+\begin{equation*}
+    c^w_t = \overline{w} + \left(\frac{\Phi}{1+\Phi} \right)\left(\frac{B_{t+1}}{R_t}-B_t \right).
+\end{equation*}
+\end{proof}
+
+关于命题\ref{prop:competitive}，我们有如下几个评注。首先，我们之所以要把(\ref{eq:phi_alter})式写成(\ref{eq:phi})的形式，是因为对于有限期模型而言，(\ref{eq:phi})式可以帮助我们更加方便的对$\phi_t$进行递归求解。其次，如我们在证明过程中所述，我们没有将(\ref{eq:pt}),(\ref{eq:rt})和(\ref{eq:cet})式中的$\tilde{b}$代换成公债供给$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$。对封闭经济而言，
+\begin{equation*}
+    \tilde{b}_t = \left(\frac{\Phi}{1+\Phi}\right)B_t.
+\end{equation*}
+同理对开放经济而言，
+\begin{equation*}
+    \tilde{b}_t = \left(\frac{\Phi}{1+\Phi}\right)\left(\frac{1}{N}\sum_j B_j \right).
+\end{equation*}
+在(\ref{eq:pt}),(\ref{eq:rt})和(\ref{eq:cet})中依据情形带入上面两个式子，我们就得到价格和总消费的具体刻画。最后，从(\ref{eq:cet})和(\ref{eq:cwt})两式中我们能够看出，在开放经济下，本国企业家的效用取决于全球平均债务水平，而本国工人的效用只取决于本国的公债水平。为简化记号，后文中我们令$\nu = \Phi/(1+\Phi)$。
+
+参照政治经济均衡的定义，我们最后需要对公债序列$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$进行刻画。为此，我们要构造政府的目标函数。这由下面的命题给出
+\begin{proposition}
+（政府的目标函数）给定本期的现存的公债$\vec{B}_t$以及下一期公债发行的决策函数$\mathcal{B}_{t+1}(\vec{B}_{t+1})$，那么政府$j$在$t$期的目标函数
+\begin{equation}
+\label{eq:govobj}
+    \max_{B_{j,t+1}}\left\{\Phi W_{j,t}(\vec{B}_t,\vec{B}_{t+1}) + V_{j,t}(\vec{B}_t,\vec{B}_{t+1}) \right\},
+\end{equation}
+可以通过下面两个式子递归的进行定义：
+\begin{equation}
+    W_{j,t}(\vec{B}_t,\vec{B}_{t+1}) = \log \left(\overline{w} +\nu\frac{B_{j,t+1}}{R_{j,t}} - \nu B_{j,t} \right)+\beta W_{j,t+1}(\vec{B}_{t+1},\mathcal{B}_{t+1}(\vec{B}_{t+1})),
+\end{equation}
+以及
+\begin{align}
+    V_{j,t}(\vec{B}_t,\vec{B}_{t+1}) = &\log (1-\eta_t) + \left(\frac{1}{1-\eta_t} \right)\left\{\E_t[\log (A(z^i_{j,t}) + \nu B_{j,t} + p_{j,t})] + \eta_t\log \left(\frac{\eta_{j,t}\phi_{j,t}}{p_{j,t}} \right) \right\} \nonumber \\
+        & +\beta V_{j,t+1}(\vec{B}_{t+1},\mathcal{B}_{t+1}(\vec{B}_{t+1})),
+\end{align}
+\end{proposition}
 
 \section{伪代码}
 
