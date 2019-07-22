@@ -318,6 +318,7 @@
 \end{definition}
 
 \subsection{求解均衡}
+\label{sec:solveequi}
 
 由模型的假设，封闭经济和开放经济中的竞争均衡都存在解析解。为此，我们需要给出对于任给的公债序列$\{\vec{B}_{j,t}\}_{t=0}^{T+1}$，价格序列、企业家以及工人决策函数的表达式。注意到由于政府预算约束(\ref{eq:govbalance})总是成立，我们可以在企业家的预算约束当中消去总额税。为此，定义超额债券需求为
 \begin{equation*}
@@ -349,9 +350,9 @@
 \begin{align}
 \label{eq:cons_entre}
     c^i_t &= (1-\eta_t)a^i_t \\
-\label{eq:risky}    
+\label{eq:risky}
     p_t k^i_{t+1} &= \phi_t \eta_t a^i_j, \\
-\label{eq:riskfree}        
+\label{eq:riskfree}
     \frac{\tilde{b}^i_{t+1}}{R_t} &= (1-\phi_t)\eta_t a^i_t.
 \end{align}
 \end{proposition}
@@ -414,13 +415,13 @@
 \begin{align}
 \label{eq:phi}
     \phi_t &= \E_t\left[\frac{A(z^i_{t+1})+p_{t+1}}{A(z^i_{t+1})+p_{t+1}+\tilde{b}_{t+1}} \right], \\
-\label{eq:pt}    
+\label{eq:pt}
     p_t    &= \frac{\eta_t\phi_t(\overline{A}+\tilde{b}_t)}{1-\eta_t\phi_t}, \\
-\label{eq:rt}    
+\label{eq:rt}
     R_t    &= \frac{(1-\eta_t\phi_t)\tilde{b}_{t+1}}{\eta_t(1-\phi_t)(\overline{A}+\tilde{b}_t)}, \\
-\label{eq:cet}    
+\label{eq:cet}
     c^e_t  &= \overline{A}+\tilde{b}_t-\frac{\tilde{b}_{t+1}}{R_t}, \\
-\label{eq:cwt}    
+\label{eq:cwt}
     c^w_t  &= \overline{w} + \left(\frac{\Phi}{1+\Phi} \right)\left(\frac{B_{t+1}}{R_t}-B_t \right),
 \end{align}
 其中$\overline{A} = \sum_l A(z_l)\mu_l$。
@@ -516,9 +517,116 @@
         & +\beta V_{j,t+1}(\vec{B}_{t+1},\mathcal{B}_{t+1}(\vec{B}_{t+1})),
 \end{align}
 \end{proposition}
+\begin{proof}
+我们用数学归纳法证明这个命题。首先从工人的间接效用开始。在工人的预算约束当中通过政府的预算约束消去转移支付$\tau_{j,t}$，我们有
+\begin{equation*}
+    c_{j,t} = \left(\frac{1}{\Phi} \right)\left[\overline{w}+\nu\left(\frac{B_{j,t+1}}{R_{j,t}}-B_{j,t}\right)\right].
+\end{equation*}
+于是在$T$期，我们有代表性工人的人均效用
+\begin{equation*}
+    \tilde{W}_{j,T} = \log c_{j,T} = \log \left(\overline{w}+\nu \frac{B_{j,T+1}}{R_{j,T}}-\nu B_{j,T}\right) - \log\Phi.
+\end{equation*}
+对$T-1$期，我们有
+\begin{align*}
+    \tilde{W}_{j,T-1} &= \log c_{j,T-1} + \beta \tilde{W}_{j,T} \\ 
+        &= \log \left(\overline{w}+\nu \frac{B_{j,T}}{R_{j,T-1}}-\nu B_{j,T-1}\right) - \log\Phi + \beta \tilde{W}_{j,T}.
+\end{align*}
+上式略加整理，我们得到
+\begin{equation*}
+    \tilde{W}_{T-1} + (1+\beta)\log \Phi = \log \left(\overline{w}+\nu \frac{B_{j,T}}{R_{j,T-1}}-\nu B_{j,T-1}\right) + \beta (\tilde{W}_{j,T}+\log\Phi).
+\end{equation*}
+于是我们猜想，若
+\begin{equation}
+\label{eq:wwtilde}
+    W_{j,t} = \tilde{W}_{j,t}+\left(\frac{1}{1-\eta_t} \right)\log\Phi,
+\end{equation}
+那么我们有$W_{j,t}$的通项公式
+\begin{equation}
+\label{eq:wrecur}
+    W_{j,t} = \log \left(\overline{w}+\nu \frac{B_{j,t+1}}{R_{j,t}}-\nu B_{j,t}\right) + \beta W_{j,t+1}.
+\end{equation}
+
+再看企业家的问题。我们此处的目的是应用企业家决策函数的性质消除企业家分布的影响，从而使得企业家的期望效用只与加总变量有关。首先注意到企业家的个人财富
+\begin{equation*}
+    a^i_{j,t} = A^i_{j,t} k^i_{j,t} + p_{j,t} k^i_{j,t} + \tilde{b}^i_{j,t},
+\end{equation*}
+取对数之后我们无法将$k^i_{j,t}$的积分分离出来，所以首先我们要对上式进行处理，将$k^i_{j,t}$提出来。为此，注意到由(\ref{eq:risky})(\ref{eq:riskfree})两式，对任意企业家$i$，$\tilde{b}^{j,t}/k^i_{j,t}$均为常数，设其为$\lambda$。那么我们有
+\begin{equation*}
+    \tilde{b}_{j,t} = \int_i b^i_{j,t}di = \lambda \int_i k^i_{j,t}di = \lambda.
+\end{equation*}
+将上式带入$a^i_{j,t}$的定义，我们有
+\begin{equation}
+\label{eq:ahat}
+    a^i_{j,t} = (A^i_{j,t}+p_{j,t}+\tilde{b}_{j,t})k^i_{j,t} \triangleq \hat{a}^i_{j,t} k^i_{j,t}.
+\end{equation}
+(\ref{eq:ahat})式有两个非常方便的性质：在加总层面，$a^i_{j,t}$是一个与企业家分布无关的常数；同时取对数之后，$k^i_{j,t}$的积分能够被分离出来。
+
+现在我们按照推导工人间接效用函数递归形式同样的方法推导求解企业家的问题。在$T$期，我们记企业家$i$的间接效用为
+\begin{equation*}
+    \tilde{V}^i_{j,T} = \log c^i_{j,T} = \log(1-\eta_T) + \log \hat{a}^i_{j,T} + \log k^i_{j,T}.
+\end{equation*}
+而$T-1$期，有
+\begin{align*}
+    \tilde{V}^i_{j,T-1} &= \log c^i_{j,T-1} + \beta\E\tilde{V}^i_{j,T} \\
+        &= \log(1-\eta_{T-1})+\log \hat{a}^i_{j,T-1} + \log k^i_{j,T-1} + \beta\E\tilde{V}^i_{j,T}.
+\end{align*}
+观察上式，我们发现此时需要一个$\E\tilde{V}^i_{j,t}$的递归表达式。根据工人间接效用的提示，我们猜想
+\begin{align}
+\label{eq:vtilde}
+    \tilde{V}^i_{j,T-1} - (1+\beta)\log k^i_{j,T-1} = & \log(1-\eta_{T-1})+\log \hat{a}^i_{j,T-1} + \beta\log\left(\frac{k^i_{j,T}}{k^i_{j,T-1}}\right) \nonumber \\
+        &+\beta (\E\tilde{V}^i_{j,T}-\log k^i_{j,T}).
+\end{align}
+上式中的$\log (k^i_{j,T}/k^i_{j,T-1})$依然是一个个体水平的变量，所以我们需要想办法用加总水平的变量将其消去。应用(\ref{eq:risky})式，我们得到
+\begin{equation*}
+    \frac{k^i_{j,t+1}}{k^i_{j,t}} = \frac{\eta_t\phi_{j,t}}{p_{j,t}}\hat{a}^i_{j,t}.
+\end{equation*}
+带回(\ref{eq:vtilde})，我们有
+\begin{align*}
+    \tilde{V}^i_{j,T-1} - (1+\beta)\log k^i_{j,T-1} = &\log(1-\eta_{T-1})+(1+\beta)\log \hat{a}^i_{j,T-1} + \beta\log\left(\frac{\eta_{T-1}\phi_{j,T-1}}{p_{j,T-1}}\right) \\
+        &+\beta (\E\tilde{V}^i_{j,T}-\log k^i_{j,T}).
+\end{align*}
+上式左右两边关于$i$积分，我们得到
+\begin{align*}
+    \E[\tilde{V}^i_{j,T-1} - (1+\beta)\log k^i_{j,T-1}] = &\log(1-\eta_{T-1})+(1+\beta)\E[\log \hat{a}^i_{j,T-1}] + \beta\log\left(\frac{\eta_{T-1}\phi_{j,T-1}}{p_{j,T-1}}\right) \\
+        &+\beta \E[\tilde{V}^i_{j,T}-\log k^i_{j,T}].
+\end{align*}
+于是由数学归纳法，我们得到$\E\tilde{V}^i_{j,t}$的递归表达式
+\begin{align}
+\label{eq:evtilde}
+    \E\left[\tilde{V}^i_{j,t} - \left(\frac{1}{1-\eta_t}\right)\log k^i_{j,t}\right] = &\log(1-\eta_{t})+\left(\frac{1}{1-\eta_t}\right)\left\{\E [\log \hat{a}^i_{j,t}] + \beta\log\left(\frac{\eta_{t}\phi_{j,t}}{p_{j,t}}\right)\right\} \nonumber \\
+        &+\beta \E\left[\tilde{V}^i_{j,t+1} - \left(\frac{1}{1-\eta_{t+1}}\right)\log k^i_{j,t+1}\right].
+\end{align}
+若我们定义
+\begin{equation}
+\label{eq:vvtilde}
+    V_{j,t} = \E\left[\tilde{V}^i_{j,t} - \left(\frac{1}{1-\eta_t}\right)\log k^i_{j,t}\right],
+\end{equation}
+那么由(\ref{eq:evtilde})，我们由
+\begin{align}
+\label{eq:vrecur}
+    V_{j,t} = \log(1-\eta_{t})+\left(\frac{1}{1-\eta_t}\right)\left\{\E [\log \hat{a}^i_{j,t}] + \beta\log\left(\frac{\eta_{t}\phi_{j,t}}{p_{j,t}}\right)\right\} +\beta V_{j,t+1}.
+\end{align}
+
+政府的效用函数为
+\begin{equation*}
+    \max_{B_{j,t+1}}\left\{\Phi\tilde{W}_{j,t}+\E\tilde{V}^i_{j,t} \right\},
+\end{equation*}
+在其中带入(\ref{eq:wwtilde})(\ref{eq:wrecur})(\ref{eq:vvtilde})和(\ref{eq:vrecur})，政府的效用函数成为
+\begin{equation*}
+    \max_{B_{j,t+1}}\left\{\Phi{W}_{j,t}+{V}^i_{j,t} \right\} + \left(\frac{1}{1-\eta_t} \right)\left(\E[\log k^i_{j,t} - \Phi\log\Phi]\right),
+\end{equation*}
+由于$k^i_{j,t}$在$t$期已经给定，所以
+\begin{equation*}
+    \left(\frac{1}{1-\eta_t} \right)\left(\E[\log k^i_{j,t} - \Phi\log\Phi]\right),
+\end{equation*}
+是一个与政府政策无关的常数。综上，命题得证。
+\end{proof}
 
 \section{伪代码}
 
+数值算法的大体流程如下。首先我们求解一个$T$期的有限期问题，此时我们得到了任何$t$时加总变量和价格关于$\vec{B}_t$的函数。随后，我们从$\vec{B}_1 = \vec{0}$为起点开始前向仿真，用$T/2$处的加总变量和价格对稳态的水平进行近似。给定该处的宏观变量，通过蒙特卡洛模拟构造均衡的企业家分布。最后，我们总是用有限期问题当中第一期的政策函数作为无穷期问题的近似。
+
+模型的算法应用了\ref{sec:solveequi}节中的三个命题。
 
 \bibliography{D:/Dissertation/Literature/Dissertation1}
 \bibliographystyle{aea}
