@@ -528,7 +528,7 @@
 \end{equation*}
 对$T-1$期，我们有
 \begin{align*}
-    \tilde{W}_{j,T-1} &= \log c_{j,T-1} + \beta \tilde{W}_{j,T} \\ 
+    \tilde{W}_{j,T-1} &= \log c_{j,T-1} + \beta \tilde{W}_{j,T} \\
         &= \log \left(\overline{w}+\nu \frac{B_{j,T}}{R_{j,T-1}}-\nu B_{j,T-1}\right) - \log\Phi + \beta \tilde{W}_{j,T}.
 \end{align*}
 上式略加整理，我们得到
@@ -624,9 +624,95 @@
 
 \section{伪代码}
 
-数值算法的大体流程如下。首先我们求解一个$T$期的有限期问题，此时我们得到了任何$t$时加总变量和价格关于$\vec{B}_t$的函数。随后，我们从$\vec{B}_1 = \vec{0}$为起点开始前向仿真，用$T/2$处的加总变量和价格对稳态的水平进行近似。给定该处的宏观变量，通过蒙特卡洛模拟构造均衡的企业家分布。最后，我们总是用有限期问题当中第一期的政策函数作为无穷期问题的近似。
+数值算法的大体流程如下。首先我们求解一个$T$期的有限期问题，此时我们得到了任何$t$时加总变量和价格关于$\vec{B}_t$的函数。注意到此时对任何自$T$期的$s$期回溯，数值上可以被理解为使用一个$s$期的问题来对无穷期进行近似。随后，我们从$\vec{B}_1 = \vec{0}$ 为起点开始前向仿真，用$T/2$ 处的加总变量和价格对稳态的水平进行近似。给定该处的宏观变量取值，我们通过蒙特卡洛模拟构造均衡的企业家分布。最后，我们从$T/2$处出发，用有限期问题当中第一期的政策函数作为无穷期问题政策函数的近似，并向前仿真。
 
-模型的算法应用了\ref{sec:solveequi}节中的三个命题。
+算法的实现应用了\ref{sec:solveequi}节中的三个命题。具体来说，上面三个命题在对称情形下能够推出下面的命题。
+\begin{proposition}
+\label{prop:algorithm}
+给定$B_{j,t}, B_{j,t+1}, p_{j,t+1}, V_{j,t+1}, W_{j,t+1}, j = 1,2$，所有$t$期的加总变量可以由如下的方程组求解：
+\begin{align*}
+    \eta_t &= \frac{\beta}{1+\beta^{T-t}/\sum_{s=1}^{T-t}\beta^{s-1}} = \frac{\beta(1-\beta^{T-t})}{1-\beta^{T-t+1}}, \\
+    \tilde{b}_{j,t} &= \begin{cases} 
+                        \nu B_{j,t} & \text{封闭经济} \\ 
+                        \nu \left(\frac{B_{1,t}+B_{2,t}}{2} \right) & \text{开放经济},
+                        \end{cases} \\
+    \tilde{b}_{j,t+1} &= \begin{cases}
+                        \nu B_{j,t+1} & \text{封闭经济} \\
+                        \nu \left(\frac{B_{1,t+1}+B_{2,t+1}}{2} \right) & \text{开放经济}, 
+                        \end{cases} \\
+    \phi_{j,t} &= \E\left[\frac{A(z^i_{t+1}+p_{j,t+1})}{A(z^i_{t+1}+p_{j,t+1}+\tilde{b}_{j,t+1}} \right], \\
+    p_{j,t} &= \frac{\eta_t \phi_{j,t}(\overline{A}+\tilde{b}_{j,t})}{1-\eta_t \phi_{j,t}}, \\
+    R_{j,t} &= \frac{(1-\eta_t\phi_{j,t})\tilde{b}_{j,t+1}}{\eta_t(1-\phi_{j,t})(\overline{A}+\tilde{b}_{j,t})}, \\
+    \hat{a}^i_{j,t} &= A(z^i_{j,t})+p_{j,t}+\tilde{b}_{j,t}, \\
+    V_{j,t} &= \log(1-\eta_t) + \left(\frac{1}{1-\eta_t}\right)\left[\eta_t\log\left(\frac{\eta_t\phi_{j,t}}{p_{j,t}} \right)+\E\log \hat{a}^i_{j,t} \right]+\beta V_{j,t+1}, \\
+    W_{j,t} &= \log\left(\overline{w}+\frac{\nu B_{j,t+1}}{R_{j,t}}-\nu B_{j,t} \right) + \beta W_{j,t+1}.
+\end{align*}
+\end{proposition}
+一个重要的地方是，在上面的命题中，$p_{j,t+1}, V_{j,t+1}, W_{j,t+1}$同时出现在条件和结论当中，于是定义了一组迭代关系。所以只要我们能够构造一个$\vec{B}_{t+1}$关于$\vec{B}_t$的关系，我们就可以从最后一期期出发，通过逆向迭代求解整个$T$期的问题。于是算法的核心便是构造这样一组关系。为简化记号，若定义$\vec{X}_t = \{B_{j,t}, B_{j,t+1}, p_{j,t+1}, V_{j,t+1}, W_{j,t+1} \}$和$\vec{Y}_t = \{p_{j,t}, V_{j,t}, W_{j,t} \}$，那么命题\ref{prop:algorithm}实际上定义了一个$\vec{Y}_t$关于$\vec{X}_t$的关系：
+\begin{equation}
+\label{eq:algo}
+    \vec{Y}_t = \Upsilon(\vec{X}_t).
+\end{equation}
+记本期状态空间$\vec{S} = B_1 \times B_2$是二维等距节点，下一期的最优政府债的空间是比$\vec{S}$更加稠密的等距节点$\vec{D}$。逆向归纳的算法如下给出。
+\begin{flushleft}
+\textbf{$T$期问题的求解：}
+\end{flushleft}
+\begin{enumerate}
+    \item
+    对于全部$(B_1,B_2)\in \vec{S}$，已知$B_{j,T+1} = p_{j,T+1} = V_{j,T+1} = W_{j,T+1} = 0$，于是$\vec{X}_T$已知。我们可以用函数(\ref{eq:algo})构造
+    \begin{equation}
+    \label{eq:tplusone}
+        \vec{Y}_T = \Upsilon(\vec{X}_T).
+    \end{equation}
+\end{enumerate}
+\begin{flushleft}
+\textbf{$t<T$期问题的求解：}\\
+此时，问题的核心是构造$\vec{B}_{t+1}$关于$\vec{B}_t$的关系。为此，我们首先求解每个国家的最优反应函数。随后，我们用最优反应函数求解纳什均衡。
+\end{flushleft}
+\begin{enumerate}
+\setcounter{enumi}{1}
+    \item
+    首先我们求解最优反应函数，这包含下面的步骤。
+    \begin{enumerate}[(a)]
+        \item
+        以国家1为例。对于全部$(B_1,B_2)\in \vec{S}$，和全部$B_{2,t+1} \in D_2$，应用函数(\ref{eq:tplusone})，我们可以对于任意国家1的新发行债务水平$B_{1,t+1}$，政府的效用
+        \begin{equation*}
+            O_{1,t}(B_{1,t+1};B_{2,t+1}) = \Phi W_{1,t} + V_{1,t}.
+        \end{equation*}
+        注意到由于$\vec{D}$比$\vec{S}$更加稠密，对于不在$\vec{S}$中的节点，我们对(\ref{eq:tplusone})应用二维线性插值。同理对于国家2，我们可以构造相应的政府效用
+        \begin{equation*}
+            O_{2,t}(B_{2,t+1};B_{1,t+1}) = \Phi W_{2,t} + V_{2,t}.
+        \end{equation*}
+        此时我们实际上定义了在每个可能的本期债务水平组合，对每个国家而言，对于任意水平的对方国家的债务发行决策，本国发行任意水平的政府债所带来的效用。
+        \item
+        上面的函数可以用来定义每个国家对于对方债务决策的最优反应
+        \begin{align*}
+            \phi_{1,t}(B_{2,t+1}) &= \max_{B_{1,t+1}\in \vec{D}_1} O_{1,t}(B_{1,t+1};B_{2,t+1}), \\
+            \phi_{2,t}(B_{1,t+1}) &= \max_{B_{2,t+1}\in \vec{D}_2} O_{2,t}(B_{2,t+1};B_{1,t+1}).
+        \end{align*}
+    \end{enumerate}
+    \item
+    最优反应函数于是可以被用来计算纳什均衡$(B^*_{1,t+1}, B^*_{2,t+1})$：
+    \begin{align*}
+        B^*_{1,t+1} &= \phi_{1,t}(B^*_{2,t+1}), \\
+        B^*_{2,t+1} &= \phi_{2,t}(B^*_{1,t+1}).
+    \end{align*}
+    这是由求解一个非线性方程组完成的，我们调用了MINPACK中的\code{hybrd}。在迭代过程当中，对于不在$\vec{D}$上的点，我们使用一维线性插值进行近似。
+    \item
+    此时，我们构造了一组$\vec{B}_{t+1}$关于$\vec{B}_t$的函数关系。我们用二次完备多项式对这个函数关系进行平滑近似：
+    \begin{align*}
+        B_{1,t+1} &= \beta_0 + \beta_1 B_1 + \beta_2 B_2 + \beta_3 B_1 B_2 + \beta_4 B_1^2 + \beta_5 B_2^2 + \beta_6 B_1 B_2, \\
+        B_{2,t+1} &= \beta_0 + \beta_1 B_1 + \beta_2 B_2 + \beta_3 B_1 B_2 + \beta_4 B_1^2 + \beta_5 B_2^2 + \beta_6 B_1 B_2.
+    \end{align*}
+    这就给了我们一个连续的$\vec{B}_{t+1} = \Lambda(\vec{B}_t)$。此时若记$s=T-t$，那么由$\Lambda$得到的
+    \begin{equation*}
+        \vec{B}^*_s = \Lambda(\vec{B}^*_s),
+    \end{equation*}
+    给出了当使用$s$期的问题对无穷期问题进行近似时，对应的稳态当中的均衡债务水平。特别的，当债务收敛是全局时，当$T$较大时，我们应该有$\vec{B}^*_s=\vec{B}_{T/2}$。
+    \item
+    应用函数$\Lambda$，对于任意$\vec{B} \in \vec{S}$，我们可以构造出$\vec{X}_t$，从而可以应用函数(\ref{eq:tplusone})构造出$\vec{Y}_t$。特别的，此处不需要线性插值。于是我们可以逆向迭代至$t=1$，从而求解出$t=1$时政府的决策函数。
+\end{enumerate}
+应用决策函数对均衡中的企业家分布进行求解是直观的，此处从略。
 
 \bibliography{D:/Dissertation/Literature/Dissertation1}
 \bibliographystyle{aea}

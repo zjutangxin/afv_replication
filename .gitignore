@@ -21,3 +21,4 @@ documentation/tech_details_cn.tex.bak
 bin/*.*
 obj/*.*
 results/*.*
+*.out
