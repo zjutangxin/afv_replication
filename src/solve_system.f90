@@ -57,7 +57,7 @@ subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)
     p2pr = AppFun2D(bVec,Nb,bVec,Nb,PriMx2,b1pr,b2pr)
     phi1 = phifun(p1pr,be1pr)
     phi2 = phifun(p2pr,be2pr)
-	p1   = eta_t*phi1*(Afun(zbar,p1pr)+be1)/(1.0-eta_t*phi1)
+    p1   = eta_t*phi1*(Afun(zbar,p1pr)+be1)/(1.0-eta_t*phi1)
     p2   = eta_t*phi2*(Afun(zbar,p2pr)+be2)/(1.0-eta_t*phi2)   
     
     if (t == nT) then
@@ -112,14 +112,14 @@ subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)
     ! send the equilibrium values back to main
     retval(1)  = c1_e
     retval(2)  = c1_w
-	retval(3)  = p1
-	retval(4)  = R1
+    retval(3)  = p1
+    retval(4)  = R1
     retval(5)  = U1_w + delta*V1wpr
     retval(6)  = EU1_e + bbeta*V1epr
-	retval(7)  = c2_e
-	retval(8)  = c2_w
-	retval(9)  = p2
-	retval(10) = R2
+    retval(7)  = c2_e
+    retval(8)  = c2_w
+    retval(9)  = p2
+    retval(10) = R2
     retval(11) = U2_w+delta*V2wpr
     retval(12) = EU2_e+bbeta*V2epr
     retval(13) = p1pr

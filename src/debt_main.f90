@@ -23,24 +23,26 @@
 
 program debt_main
 
-    use parameter
+    use global
     implicit none
 
-    real(dp), dimension(nbp) :: DebChoiceVec
+    real(dp), dimension(maxgrid) :: DebChoiceVec
     
     real(dp), dimension(nb,nb) :: DebPol1,DebPol2
     real(dp), dimension(nb,nb) :: vv1wmx,vv2wmx,vv1emx,vv2emx,pprimx1,pprimx2
     real(dp), dimension(nt+1,nb,nb) :: Pri1_seqa, Pri2_seqa
     real(dp), dimension(nt+1,nb,nb) :: v1w_seqa,v2w_seqa,v1e_seqa,v2e_seqa
     real(dp), dimension(nt,nb,nb) :: DebPol1_seqa, DebPol2_seqa    
-    real(dp) :: b1, b2, b1pr, b2pr
+    real(dp) :: b1,b2,b1pr,b2pr,p1,p2,v1e,v1w,v2e,v2w
     real(dp), dimension(14) :: retval
+    integer :: t
 
     integer :: indb, indbp, indt, indb1, indb2, indz
 
 !=======================================================================!
 !                          INITIALIZATION                               !
 !=======================================================================!
+    
     do indz = 1,nz
         zvec(indz) = zmin+(zmax-zmin)*(real(indz-1)/real(nz-1))        
     end do
@@ -52,7 +54,7 @@ program debt_main
     end do
 
     do indbp = 1, maxGrid
-        DebChoiceVec(indb) = bmin+(bmax-bmin)*(real(indbp-1)/real(maxGrid-1))
+        DebChoiceVec(indbp) = bmin+(bmax-bmin)*(real(indbp-1)/real(maxGrid-1))
     end do    
 
     v1wMx = 0.0_dp
@@ -71,8 +73,8 @@ program debt_main
 
 !=======================================================================!
 !                          TERMINAL PERIOD                              !
-!=======================================================================!    
-
+!=======================================================================!
+    
     indt = nt
 
     DebPol1 = 0.0_dp
@@ -87,19 +89,20 @@ program debt_main
             b2 = bvec(indb2)
             b1pr = DebPol1(indb1,indb2)
             b2pr = DebPol2(indb1,indb2)
-            call SolveSystem(t,b1,b2,b1pr,b2pr,retval)
+            call SolveSystem(indt,b1,b2,b1pr,b2pr,retval)
             p1  = RetVal(3)
             V1w = RetVal(5)
             V1e = RetVal(6)
             p2  = RetVal(9)
             V2w = RetVal(11)
             V2e = RetVal(12)
-            vv1wMx(i1,i2)  = V1w
-            vv2wMx(i1,i2)  = V2w
-            vv1eMx(i1,i2)  = V1e
-            vv2eMx(i1,i2)  = V2e
-            PPriMx1(i1,i2) = p1
-            PPriMx2(i1,i2) = p2
+            vv1wMx(indb1,indb2)  = V1w
+            vv2wMx(indb1,indb2)  = V2w
+            vv1eMx(indb1,indb2)  = V1e
+            vv2eMx(indb1,indb2)  = V2e
+            PPriMx1(indb1,indb2) = p1
+            PPriMx2(indb1,indb2) = p2
+
         end do
     end do
 
@@ -108,7 +111,7 @@ program debt_main
     v1eMx=vv1eMx
     v2eMx=vv2eMx
     PriMx1=PPriMx1
-	PriMx2=PPriMx2
+    PriMx2=PPriMx2
 
     v1w_seqa(t,:,:)=vv1wMx
     v2w_seqa(t,:,:)=vv2wMx

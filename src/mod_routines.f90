@@ -65,7 +65,7 @@ module routines
         real(dp) :: appfun2d
         
         integer :: nx,ny
-        real(dp) :: xstep,ystep,px,py,slope,z1,z2
+        real(dp) :: xstep,ystep,px,py,z1,z2
       
         !------FIND LOCATION OF POINT x------!
       

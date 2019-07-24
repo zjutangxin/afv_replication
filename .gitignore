@@ -22,3 +22,6 @@ bin/*.*
 obj/*.*
 results/*.*
 *.out
+*.mod
+src/*.mod
+src/*.o

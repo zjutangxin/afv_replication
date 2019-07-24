@@ -35,11 +35,11 @@ module parameter
     real(dp), parameter :: wbar = (1-theta)*zbar**theta
     real(dp), parameter :: wgt1 = 0.796_dp, wgt2 = 0.796_dp
     real(dp), parameter :: sbar = 0.5_dp
-	real(dp), parameter	:: surv_rate = 0.975_dp
-	real(dp), parameter	:: rbar = 0.03_dp
-	real(dp), parameter :: bbeta = surv_rate/(1+rbar) 
-	real(dp), parameter :: delta = bbeta		      
-
+    real(dp), parameter :: surv_rate = 0.975_dp
+    real(dp), parameter :: rbar = 0.03_dp
+    real(dp), parameter :: bbeta = surv_rate/(1+rbar) 
+    real(dp), parameter :: delta = bbeta
+    
     integer, parameter :: nb = 20, maxGrid = 200
     integer, parameter :: nt = 10
     integer, parameter :: regime = 0    
