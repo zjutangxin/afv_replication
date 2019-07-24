@@ -103,4 +103,47 @@ module routines
       
     end function AppFun2D    
 
+    subroutine PolynomialInt(xVec,nxR,yVec,nyR,zMx,zzMx,CoeVec)
+    ! polynomial fit
+        integer, intent(in) :: nxr,nyr
+        real(dp), dimension(nxr), intent(in) :: xvec
+        real(dp), dimension(nyr), intent(in) :: yvec
+        real(dp), dimension(nxr,nyr), intent(in) :: zmx
+        real(dp), dimension(nxr,nyr), intent(out) :: zzmx
+        real(dp), dimension(7), intent(out) :: coevec
+
+        integer :: indx,indy,indxy,info
+        integer, parameter :: block_size = 32
+        integer, parameter :: lwork = 7+7*block_size
+        real(dp), dimension(nxr*nyr) :: DepVarVec
+        real(dp), dimension(nxr*nyr,7) :: IndVarMx, IndVarMx_pre
+        real(dp), dimension(lwork) :: work
+        
+        do indx = 1, nxR
+            do indy = 1, nyR
+                indxy=(indx-1)*nyR+indy
+                IndVarMx(indxy,1) = 1.0_dp
+                IndVarMx(indxy,2) = xVec(indx)
+                IndVarMx(indxy,3) = yVec(indy)
+                IndVarMx(indxy,4) = xVec(indx)*yVec(indy)
+                IndVarMx(indxy,5) = xVec(indx)**2.0_dp
+                IndVarMx(indxy,6) = yVec(indy)**2.0_dp
+                IndVarMx(indxy,7) = xVec(indx)**2.0_dp*yVec(indy)**2.0_dp
+                DepVarVec(indxy) = zMx(indx,indy)
+            end do
+        end do
+        IndVarMx_pre = IndVarMx
+        ! syntax
+        ! DGELS(TRANS,M,N,NRHS,A,LDA,B,LDB,WORK,LWORK,INFO)
+        call DGELS('N',nxr*nyr,7,1,IndVarMx,nxr*nyr,DepVarVec,nxr*nyr,work,lwork,info)
+        coevec = DepVarVec
+        ! CALL DRLSE(nxR*nyR,DepVarVec,6,IndVarMx(:,2:7),nxR*nyR,1,coeVec,SST,SSE)
+        do indx = 1, nxR
+            do indy = 1, nyR
+                indxy = (indx-1)*nyR+indy
+                zzMx(indx,indy) = dot_product(IndVarMx_pre(indxy,:),coevec)
+            end do
+        end do
+    end subroutine PolynomialInt
+
 end module routines

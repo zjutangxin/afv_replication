@@ -39,10 +39,10 @@ module parameter
     real(dp), parameter :: rbar = 0.03_dp
     real(dp), parameter :: bbeta = surv_rate/(1+rbar) 
     real(dp), parameter :: delta = bbeta
-    
+
     integer, parameter :: nb = 20, maxGrid = 200
-    integer, parameter :: nt = 10
-    integer, parameter :: regime = 0    
+    integer, parameter :: nt = 50
+    integer, parameter :: regime = 1
 
     integer, parameter :: nz = 21
     real(dp), parameter :: bmin = 0.0_dp, bmax = 0.8_dp

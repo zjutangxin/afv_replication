@@ -153,3 +153,26 @@ subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)
         end function phifun
 
 end subroutine SolveSystem
+
+subroutine NashSolution(nn,xx,fvec,iflag)
+
+    use parameter, only: maxgrid,dp
+    use global, only: respfun1,respfun2,DebChoiceVec
+    use routines
+    implicit none
+
+    integer, intent(in) :: nn
+    integer, intent(out) :: iflag
+    real(dp), dimension(nn), intent(in) :: xx
+    real(dp), dimension(nn), intent(out) :: fvec
+
+    real(dp) :: bb1pr, bb2pr
+    
+    bb2pr = FFindInt(XX(1),DebChoiceVec,RespFun2,MaxGrid)
+    bb1pr = FFindInt(XX(2),DebChoiceVec,RespFun1,MaxGrid)
+    fvec(1) = XX(1)-bb1pr
+    fvec(2) = XX(2)-bb2pr
+
+    iflag = 0
+
+end subroutine NashSolution
