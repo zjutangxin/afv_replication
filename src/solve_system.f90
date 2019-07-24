@@ -35,6 +35,8 @@ subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)
     real(dp) :: be1,be1pr,p1,p1pr,phi1,a1,r1,c1_e,EU1_e,c1_w,U1_w
     real(dp) :: be2,be2pr,p2,p2pr,phi2,a2,r2,c2_e,EU2_e,c2_w,U2_w
     real(dp) :: v1wpr, v2wpr, v1epr, v2epr
+    real(dp) :: alfa_t, eta_t
+    integer :: indz
 
     if (regime == 0) then
         be1   = wgt1*b1
@@ -65,11 +67,11 @@ subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)
         c2_e  = Afun(zbar,p2) + be2
         EU1_e = log(1.0_dp-eta_t)
         EU2_e = log(1.0_dp-eta_t)
-        do j=1, Nz
-            a1 = max(Afun(zVec(j),p1)+p1+be1,x_min)
-            a2 = max(Afun(zVec(j),p2)+p2+be2,x_min)
-            EU1_e = EU1_e + log(a1)*pzVec(j)
-            EU2_e = EU2_e + log(a2)*pzVec(j)
+        do indz=1, Nz
+            a1 = max(Afun(zVec(indz),p1)+p1+be1,x_min)
+            a2 = max(Afun(zVec(indz),p2)+p2+be2,x_min)
+            EU1_e = EU1_e + log(a1)*pzVec(indz)
+            EU2_e = EU2_e + log(a2)*pzVec(indz)
         end do
     else
         R1    = (1.0_dp-eta_t*phi1)*be1pr/(eta_t*(1-phi1)*(Afun(zbar,p1)+be1))
@@ -78,16 +80,16 @@ subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)
         c2_e  = ((1.0_dp-eta_t)/eta_t)*(p2+be2pr/R2)
         EU1_e = log(1-eta_t)+(alfa_t-1)*log(eta_t*phi1/p1)
         EU2_e = log(1-eta_t)+(alfa_t-1)*log(eta_t*phi2/p2)
-        do j=1, Nz
-            a1 = max(Afun(zVec(j),p1)+p1+be1,x_min)
-            a2 = max(Afun(zVec(j),p2)+p2+be2,x_min)
-            EU1_e = EU1_e+alfa_t*log(a1)*pzVec(j)
-            EU2_e = EU2_e+alfa_t*log(a2)*pzVec(j)
+        do indz=1, Nz
+            a1 = max(Afun(zVec(indz),p1)+p1+be1,x_min)
+            a2 = max(Afun(zVec(indz),p2)+p2+be2,x_min)
+            EU1_e = EU1_e+alfa_t*log(a1)*pzVec(indz)
+            EU2_e = EU2_e+alfa_t*log(a2)*pzVec(indz)
         end do
     endif
 
-    c1_w = wfun(zbar)+wgt1*(b1pr/R1-b1)
-    c2_w = wfun(zbar)+wgt2*(b2pr/R2-b2)
+    c1_w = wbar+wgt1*(b1pr/R1-b1)
+    c2_w = wbar+wgt2*(b2pr/R2-b2)
     U1_w = log(max(c1_w,x_min))
     U2_w = log(max(c2_w,x_min))
 
@@ -139,14 +141,14 @@ subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)
             real(dp) :: phifun
             
             integer :: indz
-            real :: zzpr
+            real(dp) :: zzpr
 
             phifun = 0.0_dp
             do indz = 1, nz
                 zzpr = zVec(indz)
                 phifun = phifun + &
                     ((Afun(zzpr,pppr)+pppr)/(Afun(zzpr,pppr)+pppr+bbpr)) &
-                    *pzVec(jz)
+                    *pzVec(indz)
             end do
         end function phifun
 

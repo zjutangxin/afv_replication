@@ -30,6 +30,8 @@ module parameter
     integer, parameter :: dp = kind(1.0d0)
 
     real(dp), parameter :: theta = 0.2_dp
+    real(dp), parameter :: zbar = 1.0_dp, zmin = 0.86_dp
+    real(dp), parameter :: zmax = 2.0_dp*zbar - zmin        
     real(dp), parameter :: wbar = (1-theta)*zbar**theta
     real(dp), parameter :: wgt1 = 0.796_dp, wgt2 = 0.796_dp
     real(dp), parameter :: sbar = 0.5_dp
@@ -45,7 +47,5 @@ module parameter
     integer, parameter :: nz = 21
     real(dp), parameter :: bmin = 0.0_dp, bmax = 0.8_dp
     real(dp), parameter :: bbar = (bmin+bmax)/2.0_dp
-    real(dp), parameter :: zbar = 1.0_dp, zmin = 0.86_dp
-    real(dp), parameter :: zmax = 2.0_dp*zbar - zmin    
 
 end module parameter

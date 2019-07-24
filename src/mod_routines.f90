@@ -25,7 +25,7 @@
 
 module routines
     implicit none
-    integer, parameter :: dp = kind(1.0d0)
+    integer, parameter, private :: dp = kind(1.0d0)
     contains
 
     function FFindInt(xx,xxVec,yyVec,nn)
@@ -60,7 +60,7 @@ module routines
         integer, intent(in) :: nxr, nyr
         real(dp), dimension(nxr), intent(in) :: xvec
         real(dp), dimension(nyr), intent(in) :: yvec
-        real(dp), dimension(nxy,nyr), intent(in) :: zmx
+        real(dp), dimension(nxr,nyr), intent(in) :: zmx
         real(dp), intent(in) :: x, y
         real(dp) :: appfun2d
         
