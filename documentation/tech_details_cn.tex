@@ -632,13 +632,13 @@
 给定$B_{j,t}, B_{j,t+1}, p_{j,t+1}, V_{j,t+1}, W_{j,t+1}, j = 1,2$，所有$t$期的加总变量可以由如下的方程组求解：
 \begin{align*}
     \eta_t &= \frac{\beta}{1+\beta^{T-t}/\sum_{s=1}^{T-t}\beta^{s-1}} = \frac{\beta(1-\beta^{T-t})}{1-\beta^{T-t+1}}, \\
-    \tilde{b}_{j,t} &= \begin{cases} 
-                        \nu B_{j,t} & \text{封闭经济} \\ 
+    \tilde{b}_{j,t} &= \begin{cases}
+                        \nu B_{j,t} & \text{封闭经济} \\
                         \nu \left(\frac{B_{1,t}+B_{2,t}}{2} \right) & \text{开放经济},
                         \end{cases} \\
     \tilde{b}_{j,t+1} &= \begin{cases}
                         \nu B_{j,t+1} & \text{封闭经济} \\
-                        \nu \left(\frac{B_{1,t+1}+B_{2,t+1}}{2} \right) & \text{开放经济}, 
+                        \nu \left(\frac{B_{1,t+1}+B_{2,t+1}}{2} \right) & \text{开放经济},
                         \end{cases} \\
     \phi_{j,t} &= \E\left[\frac{A(z^i_{t+1}+p_{j,t+1})}{A(z^i_{t+1}+p_{j,t+1}+\tilde{b}_{j,t+1}} \right], \\
     p_{j,t} &= \frac{\eta_t \phi_{j,t}(\overline{A}+\tilde{b}_{j,t})}{1-\eta_t \phi_{j,t}}, \\
@@ -712,7 +712,8 @@
     \item
     应用函数$\Lambda$，对于任意$\vec{B} \in \vec{S}$，我们可以构造出$\vec{X}_t$，从而可以应用函数(\ref{eq:tplusone})构造出$\vec{Y}_t$。特别的，此处不需要线性插值。于是我们可以逆向迭代至$t=1$，从而求解出$t=1$时政府的决策函数。
 \end{enumerate}
-应用决策函数对均衡中的企业家分布进行求解是直观的，此处从略。
+
+下面我们给出对企业家分布进行仿真的伪代码。
 
 \bibliography{D:/Dissertation/Literature/Dissertation1}
 \bibliographystyle{aea}

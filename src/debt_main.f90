@@ -27,7 +27,6 @@ program debt_main
     use routines
     implicit none
 
-    real(dp), dimension(nb,nb) :: DebPol1,DebPol2
     real(dp), dimension(nb,nb) :: DDebPol1,DDebPol2
     real(dp), dimension(nb,nb) :: DDebPol1fit,DDebPol2fit
     real(dp), dimension(7) :: coevec1,coevec2    
@@ -48,12 +47,16 @@ program debt_main
     real(dp), dimension(2) :: debtGuess, fvec
     real(dp), dimension(nb,nb) :: GuessDebPol1, GuessDebPol2
 
+    real(dp), dimension(mgrid) :: mea_ss
+    real(dp) :: ssb, ssp
+    real(dp), dimension(3) :: stats
+
     real(dp), parameter :: tol = 1e-15
     integer, parameter :: lwa = (2*(3*2+13))/2
     real(dp), dimension(lwa) :: wa
     integer :: info
 
-    external NashSolution
+    external NashSolution, find_ss
 !=======================================================================!
 !                          INITIALIZATION                               !
 !=======================================================================!
@@ -257,6 +260,21 @@ program debt_main
         Pri1_seqa(indt,:,:) = PriMx1
         Pri2_seqa(indt,:,:) = PriMx2        
 
+        ! compute the implied steady state debt level when
+        ! infinite horizon policies are approximated using
+        ! t period problem
+        debtGuess = bbar
+        call hybrd1(find_ss,2,debtGuess,fvec,tol,info,wa,lwa)
+        fnorm = sqrt(sum(fvec**2,1))
+        write (*,101) 't = ', nt-indt, 'SS Debt 1 = ', debtGuess(1), &
+            'SS Debt 2 = ', debtGuess(2), 'Error = ', fnorm
+        101 format (A5, I3, A15, F10.6, A15, F10.6, A10, F12.6)            
+
+        call SolveSystem(indt,debtGuess(1),debtGuess(2), &
+            debtGuess(1),debtGuess(2),RetVal)
+        write (*,'(A15,2F14.6)') 'Land Price = ', RetVal(3), RetVal(9)
+        write (*,*) ''
+
     end do time
 
     open(1,file='./results/DebPol1.txt',form='formatted')
@@ -270,5 +288,17 @@ program debt_main
         write(1,'(20ES14.6)') DebPol2(indb,:)
     end do
     close(1)    
+
+!----------------------------------------------------------------!
+!--------------COMPUTE TRANSITION INFINITE HORIZON---------------!
+!----------------------------------------------------------------!
+    ssb = debtGuess(1)
+    ssp = retval(3)
+
+    mea_ss = 0.0_dp
+    stats = 0.0_dp
+
+    write (*,*) 'ssb = ', ssb, 'ssp = ', ssp
+
 
 end program debt_main

@@ -42,10 +42,13 @@ module parameter
 
     integer, parameter :: nb = 20, maxGrid = 200
     integer, parameter :: nt = 50
-    integer, parameter :: regime = 1
+    integer, parameter :: regime = 0
 
     integer, parameter :: nz = 21
     real(dp), parameter :: bmin = 0.0_dp, bmax = 0.8_dp
     real(dp), parameter :: bbar = (bmin+bmax)/2.0_dp
+
+    integer, parameter :: mgrid = 30000
+    real(dp), parameter :: amin = 1e-7, amax = 1000.0_dp
 
 end module parameter
