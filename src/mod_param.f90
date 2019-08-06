@@ -41,7 +41,7 @@ module parameter
     real(dp), parameter :: delta = bbeta
 
     integer, parameter :: nb = 20, maxGrid = 200
-    integer, parameter :: nt = 20
+    integer, parameter :: nt = 200
     integer, parameter :: regime = 1
 
     integer, parameter :: nz = 21

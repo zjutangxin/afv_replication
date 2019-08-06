@@ -33,5 +33,6 @@ module global
     real(dp), dimension(nb,nb) :: v1wMx, v2wMx, v1eMx, v2eMx, priMx1, priMx2
     real(dp), dimension(nb,nb) :: DebPol1,DebPol2
     real(dp), dimension(maxgrid) :: DebChoiceVec,respfun1,respfun2
+    real(dp), dimension(mgrid) :: adist
 
 end module global

@@ -38,17 +38,21 @@ program debt_main
     real(dp), dimension(nt+1,nb,nb) :: v1e_seqa,v2e_seqa
     real(dp), dimension(nt,nb,nb) :: DebPol1_seqa, DebPol2_seqa
     real(dp), dimension(maxgrid,maxgrid) :: val1mx, val2mx
-    real(dp) :: b1,b2,b1pr,b2pr,p1,p2,v1e,v1w,v2e,v2w
+    real(dp), dimension(nt,nt+1) :: Debt1_seqa, Debt2_seqa
+    real(dp) :: b1,b2,b1pr,b2pr,p1,p2,v1e,v1w,v2e,v2w,p1pr,p2pr
     real(dp), dimension(14) :: retval
+    integer, parameter :: nsim = 100
+    real(dp), dimension(nsim,3) :: stats_seqa
 
     integer :: indb, indbp, indt, indb1, indb2, indz, indbp1, indbp2
+    integer :: indi, ntt
     real(dp) :: fnorm, sumfnorm
     integer, dimension(1) :: maxind
     integer, dimension(maxgrid) :: maxindvec1,maxindvec2
     real(dp), dimension(2) :: debtGuess, fvec
     real(dp), dimension(nb,nb) :: GuessDebPol1, GuessDebPol2
 
-    real(dp), dimension(mgrid) :: mea_ss
+    real(dp), dimension(mgrid) :: mea_ss,mea,mmea
     real(dp) :: ssb, ssp
     real(dp), dimension(3) :: stats
 
@@ -95,6 +99,11 @@ program debt_main
     do indbp = 1, maxGrid
         DebChoiceVec(indbp) = &
             bmin+(bmax-bmin)*(real(indbp-1)/real(maxGrid-1))
+    end do    
+
+    do indi = 1,mGrid
+        aDist(indi) = amin+((amax-amin)/(real(mGrid)-1.0_dp)) &
+            *(real(indi)-1.0_dp)
     end do    
 
     v1wMx = 0.0_dp
@@ -342,20 +351,102 @@ program debt_main
     ! ssp = retval(3)
     ! write (*,*) 'ssb = ', ssb, 'ssp = ', ssp
 
-    ! test distribution
-    ssb = 0.4616_dp
-    ssp = 3.5062_dp
+    ! start from autarky
+    ! ssb = 0.4616_dp
+    ! ssp = 3.5062_dp
+    ssb = 0.2678_dp
+    ssp = 3.5205_dp
 
     call ss_distribution(ssb,ssp,Mea_ss,stats)
 
     if (myrank == root) then
+        write (*,*) 'Infinite Horizon'
         write (*,*) 'Share top 1%,    Share top 10%,    Gini'
         write (*,'(3f14.6)') stats
     end if
+
+    ! simulate the transition path to open economy
+    b1 = max(ssb,bmin)
+    b2 = max(ssb,bmin)
+    Mea = Mea_ss
+
+    do indt = 1,nsim
+
+        b1pr = AppFun2D(bVec,Nb,bVec,Nb,DebPol1,b1,b2)
+        b2pr = AppFun2D(bVec,Nb,bVec,Nb,DebPol2,b1,b2)
+
+        call solvesystem(1,b1,b2,b1pr,b2pr,retval)
+
+        p1 = retval(3)
+        p2 = retval(9)
+        p1pr = retval(13)
+        p2pr = retval(14)
+
+        if (indt == 1) then
+            call t_step_distribution(Mea,ssb,ssb,ssp,p1,MMea,stats)
+            Mea = MMea
+        endif
+        call t_step_distribution(Mea,b1,b1pr,p1,p1pr,MMea,stats)
+
+        Stats_seqa(indt,:) = Stats
+
+        if (indt <= 100 .and. myrank == root) then
+            write (*,200) indt,b1,b2,&
+                retval(4)*surv_rate-1,retval(10)*surv_rate-1,&
+                retval(3),retval(9),stats
+            200 format (i5,6f7.4,3f9.4)
+        end if
+
+        b1 = b1pr
+        b2 = b2pr
+        Mea = MMea
+    end do
+
+    if (myrank == root) then
+        write (*,*) ''
+        write (*,*) 'Debt-Output Ratio = ', b1/(retval(1)+retval(2)),&
+            b2/(retval(7)+retval(8))
+        write (*,*) ''
+    end if
     
+    debt1_seqa = -1.0_dp
+    debt2_seqa = -1.0_dp
+
+    do ntt = nt,1,-1
+        b1 = 0.0_dp
+        b2 = 0.0_dp
+        do indt = nt-ntt+1,nt
+            DebPol1 = DebPol1_seqa(indt,:,:)
+            DebPol2 = DebPol2_seqa(indt,:,:)
+            b1pr = AppFun2D(bVec,Nb,bVec,Nb,DebPol1,b1,b2)
+            b2pr = AppFun2D(bVec,Nb,bVec,Nb,DebPol2,b1,b2)
+            call SolveSystem(1,b1,b2,b1pr,b2pr,RetVal)
+            Debt1_seqa(nTT,indt+nTT-nT) = b1
+            Debt2_seqa(nTT,indt+nTT-nT) = b2
+            b1 = b1pr
+            b2 = b2pr
+        end do
+        Debt1_seqa(nTT,nTT+1) = 0.0_dp
+        Debt2_seqa(nTT,nTT+1) = 0.0_dp
+    end do
+
+    if (myrank == root) then
+        open(1,file='./results/Debt1_seqa.txt',form='formatted')
+        do indt = 1,nt
+            write(1,'(200ES14.6)') debt1_seqa(indt,:)
+        end do
+        close(1)
+
+        open(1,file='./results/Debt2_seqa.txt',form='formatted')
+        do indt = 1,nt
+            write(1,'(200ES14.6)') debt2_seqa(indt,:)
+        end do
+        close(1)
+    end if
+
     call cpu_time(etime)
     if (myrank == root) then
-        write (*,'(A10,F6.2)') 'Time = ', etime-btime
+        write (*,'(A10,F10.4)') 'Time = ', etime-btime
     end if
 
     call mpi_finalize(ierr)

@@ -177,7 +177,7 @@ end subroutine find_ss
 subroutine ss_distribution(b,p,Mea,stats)
 
     use parameter
-    use global, only: zvec,pzvec
+    use global, only: zvec,pzvec,adist
     use routines
 
     implicit none
@@ -186,7 +186,7 @@ subroutine ss_distribution(b,p,Mea,stats)
     real(dp), dimension(3), intent(out) :: stats
 
     real(dp) :: w_size,be,phi,R,a,apr,wInc,perc
-    real(dp), dimension(mgrid) :: adist,MMea
+    real(dp), dimension(mgrid) :: MMea
     real(dp), dimension(mgrid*nz) :: inc_vec,mea_vec
     real(dp), dimension(mgrid,nz) :: prodist,ydist
     integer, dimension(mgrid,nz) :: inddist
@@ -197,16 +197,11 @@ subroutine ss_distribution(b,p,Mea,stats)
 
     w_size = wgt1
 
-    ! initialize the distribution
-    do indi = 1,mGrid
-        aDist(indi) = amin+((amax-amin)/(real(mGrid)-1.0_dp)) &
-            *(real(indi)-1.0_dp)
-        Mea(indi) = 1.0_dp/real(mGrid)
-    end do
-
     be = w_size*b
     phi = phifun(p,be)
     R = Rfun(be,be,p)
+
+    mea = 1.0_dp/real(mGrid)
 
     do indi = 1,mgrid
         a = adist(indi)
@@ -292,3 +287,102 @@ subroutine ss_distribution(b,p,Mea,stats)
     stats(3) = FindGini(inc_vec,mea_vec,mgrid*nz)*100
 
 end subroutine ss_distribution
+
+subroutine t_step_distribution(Mea,b,bpr,p,ppr,MMea,stats)
+
+    use parameter
+    use global, only: zvec,pzvec,adist
+    use routines
+
+    implicit none
+    real(dp), intent(in) :: b,p,bpr,ppr
+    real(dp), dimension(mgrid), intent(in) :: Mea
+    real(dp), dimension(mgrid), intent(out) :: MMea
+    real(dp), dimension(3), intent(out) :: stats
+
+    real(dp) :: w_size,be,phi,R,a,apr,wInc,perc,bepr
+    real(dp), dimension(mgrid*nz) :: inc_vec,mea_vec
+    real(dp), dimension(mgrid,nz) :: prodist,ydist
+    integer, dimension(mgrid,nz) :: inddist
+    integer :: indi, indj
+    integer :: index, index_bar
+    real(dp) :: prob, prob_bar
+
+    w_size = wgt1
+
+    be = w_size*b
+    bepr = w_size*bpr
+    phi = phifun(ppr,bepr)
+    R = Rfun(be,bepr,ppr)
+
+    do indi = 1,mgrid
+        a = adist(indi)
+        do indj = 1,nz
+            apr = bbeta*((Afun(zVec(indj),ppr)+ppr)*phi/p+R*(1-phi))*a
+            call FindIndex(apr,aDist,mgrid,index,prob)
+            inddist(indi,indj) = index
+            prodist(indi,indj) = prob
+        end do
+    end do
+
+    ! new entrants
+    apr = afun(zbar,ppr)+ppr+bepr
+    call findindex(apr,adist,mgrid,index_bar,prob_bar)
+
+    ! find next period distribution
+    MMea=0.0
+
+    do indi = 1,mgrid
+        do indj = 1,nz
+            index = indDist(indi,indj)
+            prob = prodist(indi,indj)
+            MMea(index-1) = MMea(index-1)+&
+                surv_rate*Mea(indi)*prob*pzVec(indj)
+            MMea(index) = MMea(index)+&
+                surv_rate*Mea(indi)*(1-prob)*pzVec(indj)
+        end do
+    end do
+    MMea(index_bar-1) = MMea(index_bar-1)+(1-surv_rate)*prob_bar
+    MMea(index_bar) = MMea(index_bar)+(1-surv_rate)*(1-prob_bar)
+
+    ! construct income distribution
+    do indi = 1,mgrid
+        a = adist(indi)
+        ! ybardist(indi) = bbeta*(Afun(zbar,ppr)*phi/p+(R-1)*(1-phi))*a
+        do indj = 1,nz
+            ydist(indi,indj) = bbeta*(Afun(zVec(indj),ppr)*phi/p + &
+                (R-1)*(1-phi))*a
+        end do
+    end do
+
+    wInc = (wbar+bepr/R-bepr)*(1-w_size)/w_size
+    ! call FindIndex(wInc,ybardist,mgrid,index,prob)
+    ! AllMea = Mea*(1-w_size)
+    ! AllMea(index-1) = AllMea(index-1)+w_size*prob
+    ! AllMea(index) = AllMea(index)+w_size*(1-prob)
+
+    ! construct inc_vec and mea_vec
+    do indi = 1,mgrid
+        do indj = 1,nz
+            index = (indi-1)*nz+indj
+            inc_vec(index) = ydist(indi,indj)
+            mea_vec(index) = MMea(indi)*pzvec(indj)
+        end do
+    end do
+    Mea_vec = Mea_vec/sum(Mea_vec)
+
+    ! sort inc_vec and mea_vec by ascending order of inv_vec
+    call piksr2(mgrid*nz,inc_vec,mea_vec)
+    call FindIndex(wInc,inc_vec,mgrid*nz,index,prob)
+    mea_vec = mea_vec*(1-w_size)
+    mea_vec(index-1) = mea_vec(index-1)+w_size*prob
+    mea_vec(index) = mea_vec(index)+w_size*(1-prob)
+
+    ! calculate statistics
+    perc = 0.99_dp
+    stats(1) = FindPerc(perc,inc_vec,mea_vec,mgrid*nz)*100
+    perc = 0.90_dp
+    stats(2) = FindPerc(perc,inc_vec,mea_vec,mgrid*nz)*100
+    stats(3) = FindGini(inc_vec,mea_vec,mgrid*nz)*100
+
+end subroutine t_step_distribution
