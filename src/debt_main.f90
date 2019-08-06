@@ -433,20 +433,20 @@ program debt_main
     if (myrank == root) then
         open(1,file='./results/Debt1_seqa.txt',form='formatted')
         do indt = 1,nt
-            write(1,'(200ES14.6)') debt1_seqa(indt,:)
+            write(1,'(250ES20.10)') debt1_seqa(indt,:)
         end do
         close(1)
 
         open(1,file='./results/Debt2_seqa.txt',form='formatted')
         do indt = 1,nt
-            write(1,'(200ES14.6)') debt2_seqa(indt,:)
+            write(1,'(250ES20.10)') debt2_seqa(indt,:)
         end do
         close(1)
     end if
 
     call cpu_time(etime)
     if (myrank == root) then
-        write (*,'(A10,F10.4)') 'Time = ', etime-btime
+        write (*,'(A10,F12.4)') 'Time = ', etime-btime
     end if
 
     call mpi_finalize(ierr)
