@@ -156,6 +156,7 @@ program debt_main
             val1mx = 0.0_dp
             val2mx = 0.0_dp
 
+            ! test parallel
             do indbp1 = 1,maxgrid
             do indbp2 = 1,maxgrid
                 b1pr = DebChoiceVec(indbp1)
