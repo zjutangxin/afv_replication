@@ -292,13 +292,17 @@ program debt_main
 !----------------------------------------------------------------!
 !--------------COMPUTE TRANSITION INFINITE HORIZON---------------!
 !----------------------------------------------------------------!
-    ssb = debtGuess(1)
-    ssp = retval(3)
+    ! ssb = debtGuess(1)
+    ! ssp = retval(3)
+    ! write (*,*) 'ssb = ', ssb, 'ssp = ', ssp
 
-    mea_ss = 0.0_dp
-    stats = 0.0_dp
+    ! test distribution
+    ssb = 0.4616_dp
+    ssp = 3.5062_dp
 
-    write (*,*) 'ssb = ', ssb, 'ssp = ', ssp
+    call ss_distribution(ssb,ssp,Mea_ss,stats)
 
-
+    write (*,*) 'Share top 1%,    Share top 10%,    Gini'
+    write (*,'(3f14.6)') stats
+    
 end program debt_main

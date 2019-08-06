@@ -1,0 +1,30 @@
+open economy: 
+POLICY ITER   198    0.00114782401    0.00117749326    0.00000000000
+ t = 198   SS Debt 1 =   0.461560   SS Debt 2 =   0.461566  Error =     0.000000
+  Land Price =       3.506212      3.506212
+
+POLICY ITER   199    0.00105068551    0.00105240249    0.00000000000
+ t = 199   SS Debt 1 =   0.461557   SS Debt 2 =   0.461570  Error =     0.000000
+  Land Price =       3.506215      3.506215
+
+ssb =   0.46155699654621873      ssp =    3.5062150145218034
+
+closed economy:
+ POLICY ITER   198    0.00000000000    0.00000000000    0.00000000000
+ t = 198   SS Debt 1 =   0.267821   SS Debt 2 =   0.267821  Error =     0.000000
+  Land Price =       3.520480      3.520480
+
+ POLICY ITER   199    0.00000000000    0.00000000000    0.00000000000
+ t = 199   SS Debt 1 =   0.267821   SS Debt 2 =   0.267821  Error =     0.000000
+  Land Price =       3.520484      3.520484
+
+ ssb =   0.26782073735711703      ssp =    3.5204839825955050 
+
+Test ss_distribution
+closed economy: ssb = 0.2678, ssp = 3.5205
+ Share top 1%,    Share top 10%,    Gini
+      5.830364     24.616527     26.915247
+
+Open economy: ssb = 0.4616, ssp = 3.5062
+ Share top 1%,    Share top 10%,    Gini
+      5.765726     24.891554     26.731539
