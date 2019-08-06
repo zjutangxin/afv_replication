@@ -26,6 +26,7 @@ program debt_main
     use global
     use routines
     implicit none
+    include 'mpif.h'
 
     real(dp), dimension(nb,nb) :: DDebPol1,DDebPol2
     real(dp), dimension(nb,nb) :: DDebPol1fit,DDebPol2fit
@@ -56,11 +57,31 @@ program debt_main
     real(dp), dimension(lwa) :: wa
     integer :: info
 
+    ! parallel computing
+    integer :: ierr,nproc,ni_i,ibegin,iend
+    real(dp), dimension(:), allocatable :: val1_ind,val2_ind
+    real(dp), dimension(:), allocatable :: val1_agg,val2_agg
+    real(dp) :: btime, etime
+
     external NashSolution, find_ss
+
 !=======================================================================!
 !                          INITIALIZATION                               !
 !=======================================================================!
-    
+    ! initialize MPI environment
+    call mpi_init(ierr)
+    call mpi_comm_size(mpi_comm_world,nproc,ierr)
+    call mpi_comm_rank(mpi_comm_world,myrank,ierr)
+
+    call cpu_time(btime)
+
+    ! distribution of tasks
+    ni_i = int(real(maxgrid-1,dp)/real(nproc,dp))+1
+    allocate(val1_ind(ni_i*maxgrid),val1_agg(ni_i*maxgrid*nproc))
+    allocate(val2_ind(ni_i*maxgrid),val2_agg(ni_i*maxgrid*nproc))
+    ibegin = myrank*ni_i+1
+    iend = min((myrank+1)*ni_i,maxgrid)
+
     do indz = 1,nz
         zvec(indz) = zmin+(zmax-zmin)*(real(indz-1)/real(nz-1))        
     end do
@@ -156,8 +177,8 @@ program debt_main
             val1mx = 0.0_dp
             val2mx = 0.0_dp
 
-            ! test parallel
-            do indbp1 = 1,maxgrid
+            ! parallel over indbp1
+            do indbp1 = ibegin,iend
             do indbp2 = 1,maxgrid
                 b1pr = DebChoiceVec(indbp1)
                 b2pr = DebChoiceVec(indbp2)
@@ -166,11 +187,25 @@ program debt_main
                 v1e = RetVal(6)
                 v2w = RetVal(11)
                 v2e = RetVal(12)
-                val1Mx(indbp1,indbp2) = v1w*wgt1+v1e*(1-wgt1)
-                val2Mx(indbp1,indbp2) = v2w*wgt2+v2e*(1-wgt2)                
+                val1_ind((indbp1-ibegin)*maxgrid+indbp2) = &
+                    v1w*wgt1+v1e*(1-wgt1)
+                val2_ind((indbp1-ibegin)*maxgrid+indbp2) = &
+                    v2w*wgt1+v2e*(1-wgt1)                    
             enddo
             enddo
-    
+
+            ! gather all val_ind
+            call mpi_allgather(val1_ind(1),ni_i*maxgrid,mpi_double_precision,&
+                val1_agg(1),ni_i*maxgrid,mpi_double_precision,&
+                mpi_comm_world,ierr)
+            call mpi_allgather(val2_ind(1),ni_i*maxgrid,mpi_double_precision,&
+                val2_agg(1),ni_i*maxgrid,mpi_double_precision,&
+                mpi_comm_world,ierr)
+            val1mx = reshape(source=val1_agg,shape=(/maxgrid,maxgrid/),&
+                order = (/2,1/))
+            val2mx = reshape(source=val2_agg,shape=(/maxgrid,maxgrid/),&
+                order = (/2,1/))    
+
             ! best response functions
             do indbp2 = 1, MaxGrid
                 MaxInd = MAXLOC(Val1Mx(:,indbp2))
@@ -215,8 +250,10 @@ program debt_main
         GuessDebPol1 = DDebPol1
         GuessDebPol2 = DDebPol2
 
-        write (*,'(a12,i6,3f17.11)') "POLICY ITER", nT-indt, &
-        sum(abs(DDebPol1-DebPol1)),sum(abs(DDebPol2-DebPol2)),SumFnorm
+        if (myrank == root) then
+            write (*,'(a12,i6,3f17.11)') "POLICY ITER", nT-indt, &
+            sum(abs(DDebPol1-DebPol1)),sum(abs(DDebPol2-DebPol2)),SumFnorm
+        end if
 
         DebPol1 = DDebPol1
         DebPol2 = DDebPol2
@@ -267,28 +304,36 @@ program debt_main
         debtGuess = bbar
         call hybrd1(find_ss,2,debtGuess,fvec,tol,info,wa,lwa)
         fnorm = sqrt(sum(fvec**2,1))
-        write (*,101) 't = ', nt-indt, 'SS Debt 1 = ', debtGuess(1), &
-            'SS Debt 2 = ', debtGuess(2), 'Error = ', fnorm
-        101 format (A5, I3, A15, F10.6, A15, F10.6, A10, F12.6)            
+        
+        if (myrank == root) then
+            write (*,101) 't = ', nt-indt, 'SS Debt 1 = ', debtGuess(1), &
+                'SS Debt 2 = ', debtGuess(2), 'Error = ', fnorm
+            101 format (A5, I3, A15, F10.6, A15, F10.6, A10, F12.6)            
+        end if
 
         call SolveSystem(indt,debtGuess(1),debtGuess(2), &
             debtGuess(1),debtGuess(2),RetVal)
-        write (*,'(A15,2F14.6)') 'Land Price = ', RetVal(3), RetVal(9)
-        write (*,*) ''
+
+        if (myrank == root) then
+            write (*,'(A15,2F14.6)') 'Land Price = ', RetVal(3), RetVal(9)
+            write (*,*) ''
+        end if
 
     end do time
 
-    open(1,file='./results/DebPol1.txt',form='formatted')
-    do indb = 1,nb
-        write(1,'(20ES14.6)') DebPol1(indb,:)
-    end do
-    close(1)
+    if (myrank == root) then
+        open(1,file='./results/DebPol1.txt',form='formatted')
+        do indb = 1,nb
+            write(1,'(20ES14.6)') DebPol1(indb,:)
+        end do
+        close(1)
 
-    open(1,file='./results/DebPol2.txt',form='formatted')
-    do indb = 1,nb
-        write(1,'(20ES14.6)') DebPol2(indb,:)
-    end do
-    close(1)    
+        open(1,file='./results/DebPol2.txt',form='formatted')
+        do indb = 1,nb
+            write(1,'(20ES14.6)') DebPol2(indb,:)
+        end do
+        close(1)    
+    end if
 
 !----------------------------------------------------------------!
 !--------------COMPUTE TRANSITION INFINITE HORIZON---------------!
@@ -303,7 +348,16 @@ program debt_main
 
     call ss_distribution(ssb,ssp,Mea_ss,stats)
 
-    write (*,*) 'Share top 1%,    Share top 10%,    Gini'
-    write (*,'(3f14.6)') stats
+    if (myrank == root) then
+        write (*,*) 'Share top 1%,    Share top 10%,    Gini'
+        write (*,'(3f14.6)') stats
+    end if
     
+    call cpu_time(etime)
+    if (myrank == root) then
+        write (*,'(A10,F6.2)') 'Time = ', etime-btime
+    end if
+
+    call mpi_finalize(ierr)
+
 end program debt_main

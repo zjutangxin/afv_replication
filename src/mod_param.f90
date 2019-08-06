@@ -41,7 +41,7 @@ module parameter
     real(dp), parameter :: delta = bbeta
 
     integer, parameter :: nb = 20, maxGrid = 200
-    integer, parameter :: nt = 5
+    integer, parameter :: nt = 20
     integer, parameter :: regime = 1
 
     integer, parameter :: nz = 21
@@ -50,5 +50,8 @@ module parameter
 
     integer, parameter :: mgrid = 5000
     real(dp), parameter :: amin = 1e-7, amax = 1000.0_dp
+
+    integer, parameter :: root = 0
+    integer :: myrank
 
 end module parameter

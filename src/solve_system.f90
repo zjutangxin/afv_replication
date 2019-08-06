@@ -242,7 +242,7 @@ subroutine ss_distribution(b,p,Mea,stats)
         MMea(index_bar) = MMea(index_bar)+(1-surv_rate)*(1-prob_bar)
         MeaErr = sum(abs(MMea-Mea))
 
-        if (mod(Meaiter,250)==0) then
+        if (mod(Meaiter,250)==0 .and. myrank == root) then
             write (*,'(A15,I5,ES14.6)') 'Dist Iter = ', Meaiter, Meaerr
         endif
 
