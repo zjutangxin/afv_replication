@@ -3,9 +3,10 @@
 ! -----------------------------------------------------------------------------
 !   
 ! Purpose:
-!     - Module with auxilliary routines.
+!     - Module with auxilliary routines for low-level calculation.
 ! Author:
 !     Xin Tang @ IMF, Summer 2019
+!     Based on Vincenzo Quadrini's original code
 !  
 ! Record of Revisions:
 !         Date:                 Description of Changes
@@ -16,11 +17,7 @@
 !   GNU gfortran on Ubuntu 16.04
 !
 ! Library Used:
-!   - MINPACK: by source code
 !   - LAPACK, ATLAS, and BLAS: by binary library
-! 
-! Shared by:
-!   - debt_main.f90
 ! =============================================================================
 
 module routines

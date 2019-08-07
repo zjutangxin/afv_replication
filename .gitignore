@@ -18,6 +18,14 @@ documentation/tech_details_cn.out.bak
 documentation/tech_details_cn.pdf
 documentation/tech_details_cn.synctex.gz
 documentation/tech_details_cn.tex.bak
+documentation/instructions.aux
+documentation/instructions.bbl
+documentation/instructions.blg
+documentation/instructions.log
+documentation/instructions.out.bak
+documentation/instructions.pdf
+documentation/instructions.synctex.gz
+documentation/instructions.tex.bak
 bin/*.*
 obj/*.*
 results/*.*

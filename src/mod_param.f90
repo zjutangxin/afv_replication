@@ -3,9 +3,10 @@
 ! -----------------------------------------------------------------------------
 !   
 ! Purpose:
-!     - Module with parameters shared across files.
+!     - Module with model parameters.
 ! Author:
 !     Xin Tang @ IMF, Summer 2019
+!     Based on Vincenzo Quadrini's original code
 !  
 ! Record of Revisions:
 !         Date:                 Description of Changes
@@ -15,12 +16,7 @@
 ! Compiling Environment:
 !   GNU gfortran on Ubuntu 16.04
 !
-! Library Used:
-!   - MINPACK: by source code
-!   - LAPACK, ATLAS, and BLAS: by binary library
-! 
-! Shared by:
-!   - debt_main.f90
+! Library Used: None
 ! =============================================================================
 
 module parameter
@@ -51,6 +47,7 @@ module parameter
     integer, parameter :: mgrid = 5000
     real(dp), parameter :: amin = 1e-7, amax = 1000.0_dp
 
+    ! Parallel computing
     integer, parameter :: root = 0
     integer :: myrank
 

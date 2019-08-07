@@ -1,0 +1,351 @@
+% Article Format: American Economic Review
+% Xin Tang @ Stony Brook University
+% Last Updated: August 2014
+\documentclass[twoside,11pt,leqno]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    Text Layout                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page Layout
+\usepackage[hmargin={1.2in,1.2in},vmargin={1.5in,1.5in}]{geometry}
+\topmargin -1cm        % read Lamport p.163
+\oddsidemargin 0.04cm   % read Lamport p.163
+\evensidemargin 0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth 16.59cm
+\textheight 21.94cm
+\renewcommand\baselinestretch{1.15}
+\parskip 0.25em
+\parindent 1em
+\linespread{1}
+
+% Set header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[LE,RO]{\thepage}
+%\fancyhead[CE]{\textit{JI QI, XIN TANG AND XICAN XI}}
+%\fancyhead[CO]{\textit{THE SIZE DISTRIBUTION OF FIRMS AND INDUSTRIAL POLLUTION}}
+\cfoot{}
+\renewcommand{\headrulewidth}{0pt}
+%\renewcommand*\footnoterule{}
+%\setcounter{page}{1}
+
+% Font
+\renewcommand{\rmdefault}{ptm}
+\renewcommand{\sfdefault}{phv}
+%\usepackage[lite]{mtpro2}
+% use Palatinho-Roman as default font family
+%\renewcommand{\rmdefault}{ppl}
+\usepackage[scaled=0.88]{helvet}
+\makeatletter   % Roman Numbers
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+\usepackage{CJK}
+
+% Section Titles
+\renewcommand\thesection{\textnormal{\textbf{\Roman{section}.}}}
+\renewcommand\thesubsection{\textnormal{\Alph{subsection}.}}
+\usepackage{titlesec}
+\titleformat*{\section}{\bf \center}
+\titleformat*{\subsection}{\it \center}
+\renewcommand{\refname}{\textnormal{REFERENCES}}
+
+% Appendix
+\usepackage[title]{appendix}
+\renewcommand{\appendixname}{APPENDIX}
+
+% Citations
+\usepackage[authoryear,comma]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{0em}
+\usepackage[%dvipdfmx,%
+            bookmarks=true,%
+            pdfstartview=FitH,%
+            breaklinks=true,%
+            colorlinks=true,%
+            %allcolors=black,%
+            citecolor=blue,
+            linkcolor=red,
+            pagebackref=true]{hyperref}
+
+% Functional Package
+\usepackage{enumerate}
+\usepackage{url}      % This package helps to typeset urls
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    Mathematics                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathrsfs,upgreek}
+% Operators
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\e}{\mathrm{e}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\plim}{plim}
+\renewcommand{\vec}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\gvec}[1]{{\boldsymbol{#1}}}
+
+\newcommand{\code}{\texttt}
+\newcommand{\bcode}[1]{\texttt{\blue{#1}}}
+\newcommand{\rcode}[1]{\texttt{\red{#1}}}
+\newcommand{\rtext}[1]{{\red{#1}}}
+\newcommand{\btext}[1]{{\blue{#1}}}
+
+% New Environments
+\newtheorem{result}{Result}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\setlength{\unitlength}{1mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 Tables and Figures                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{threeparttable,booktabs,multirow,array} % This allows notes in tables
+\usepackage{floatrow} % For Figure Notes
+\floatsetup[table]{capposition=top}
+\usepackage[font={sc,footnotesize}]{caption}
+\DeclareCaptionLabelSeparator{aer}{---}
+\captionsetup[table]{labelsep=aer}
+\captionsetup[figure]{labelsep=period}
+\usepackage{graphicx,pstricks,epstopdf}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 Insert Code Snippet                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings,textcomp,upquote}
+\lstset{
+     language=fortran,
+     frame = single,
+%     backgroundcolor=\color[RGB]{255,228,202}, % pink
+     backgroundcolor=\color[RGB]{231,240,233}, % green
+%     backgroundcolor=\color[RGB]{239,240,248},
+     framerule=0pt,
+     showstringspaces=false,
+     basicstyle=\ttfamily\footnotesize,
+     numbers=left,
+     stepnumber=1,
+     numberstyle=\tiny,
+     keywordstyle=\color{blue}\ttfamily,
+     stringstyle=\color{red}\ttfamily,
+     commentstyle=\color[rgb]{.133,.545,.133}\ttfamily,
+     morecomment=[l][\color{magenta}]{\#},
+     fontadjust,
+     captionpos=t,
+     framextopmargin=2pt,framexbottommargin=2pt,
+     abovecaptionskip=4ex,belowcaptionskip=3pt,
+     belowskip=3pt,
+     framexleftmargin=4pt,
+     xleftmargin=4em,xrightmargin=4em,
+     texcl=false,
+     extendedchars=false,columns=flexible,mathescape=true,
+     captionpos=b,
+}
+\renewcommand{\lstlistingname}{Source Code}
+
+\title{\vspace{-1cm}\Large{{\textsf{Instructions on Running the Code on Linux}}}}
+\author{\normalsize\textsc{Xin Tang} \\ \normalsize\textsc{International Monetary Fund}}
+\date{\normalsize\today}
+
+\begin{document}
+\maketitle
+
+This note provides step-by-step instruction on how to run the code on Stony Brook Seawulf and Ubuntu. We start with Seawulf. In what follows, everything starts with a \code{\$} is what you type, while those preceded by \code{>} are what the terminal prints.
+\begin{enumerate}[1.]
+    \item
+    Log in the login node of the server.
+    \item
+    Load first the \bcode{shared} and then the \bcode{git} modules.
+\begin{verbatim}    
+$ module load shared
+$ module load git
+\end{verbatim}
+    \item
+    Clone the GitHub repository that hosts the source code.
+\begin{verbatim}
+$ git clone https://github.com/zjutangxin/afv_replication
+> Cloning into 'afv_replication'...
+ remote: Enumerating objects: 104, done.
+ remote: Counting objects: 100% (104/104), done.
+ remote: Compressing objects: 100% (67/67), done.
+ remote: Total 104 (delta 58), reused 74 (delta 34), pack-reused 0
+ Receiving objects: 100% (104/104), 611.89 KiB | 0 bytes/s, done.
+ Resolving deltas: 100% (58/58), done.
+ Checking out files: 100% (17/17), done.  
+\end{verbatim}    
+    Notice that this clones the \bcode{master} branch of the repository, which solves the model in serial. The paralleled version is hosted in another branch called \bcode{mpi\_debt}. To clone that branch, first create a local git branch \code{mpi\_debt} (could be any name).
+\begin{verbatim}    
+$ git branch mpi_debt
+\end{verbatim}
+    Then switch to that branch.
+\begin{verbatim}
+$ git checkout mpi_debt
+> Switched to branch 'mpi_debt'
+\end{verbatim}
+    Once on the local \bcode{mpi\_debt} branch, clone the remote branch.
+\begin{verbatim}    
+[xintang@login1 afv_replication]$ git pull origin mpi_debt
+> From https://github.com/zjutangxin/afv_replication
+  * branch            mpi_debt   -> FETCH_HEAD
+ Updating 3f369e4..55c3b62
+ Fast-forward
+  compile.sh           |  19 +++++++++++++++----
+  src/debt_main.f90    | 204 +++++++++++++++++++++++++++++++++++
+  src/mod_global.f90   |   1 +
+  src/mod_param.f90    |   5 ++++-
+  src/solve_system.f90 | 116 +++++++++++++++++++++++++++++++++++
+  5 files changed, 300 insertions(+), 45 deletions(-)
+\end{verbatim}
+    Now you have all the files ready to go. I find this branching feature extremely helpful in developing code, which allows you to switch back and forth between different versions of the code without messing things up.
+    \item
+    Submit an interactive job to \code{Slurm}, requesting 40 cores.
+\begin{verbatim}    
+$ srun -n 40 -p short-40core --pty bash
+\end{verbatim}
+    \item
+    Once on the debugging node, load the modules for \bcode{gcc} (the compiler), \bcode{git} (version control), \bcode{LAPACK} and \bcode{BLAS} (linear algebra), and \code{OpenMPI} (parallel computing).
+\begin{verbatim}    
+$ module load lapack/gcc/64/3.7.0 blas/gcc/64/3.7.0 git gcc openmpi
+\end{verbatim}
+    \item
+    A couple of working directories need to be created initially. Specifically, the \bcode{./obj/} for intermediate files and \code{./results/} for saving results.
+\begin{verbatim}
+$ mkdir obj results
+\end{verbatim}
+    \item
+    To avoid having to compile \bcode{MINPACK} everytime, I first compile it to an relocatable object file, and later just link it.
+\begin{verbatim}
+$ gfortran -c ./lib_src/minpack.f90 -Ofast -march=native -o ./obj/minpack.o
+\end{verbatim}
+    \item
+    Now compile the program in parallel. The slashes are used to break the line for a very long command.
+\begin{verbatim}    
+[xintang@dn025 afv_replication]$ mpif90 ./src/mod_param.f90 ./src/mod_global.f90 \
+    ./src/mod_routines.f90 ./src/solve_system.f90 ./src/debt_main.f90 \
+    ./obj/minpack.o /gpfs/software/lapack/lapack-3.7.0/liblapack.a \
+    /gpfs/software/blas/BLAS-3.7.0/libblas.a \
+    -o debt_main_par.out -Ofast -march=native -Wall
+> /usr/bin/ld: warning: libgfortran.so.3, needed by \
+    /usr/mpi/gcc/openmpi-3.1.1rc1/lib64/libmpi_usempi.so, \
+    may conflict with libgfortran.so.5
+\end{verbatim}
+    The warning message is because the linker (\code{ld}) complains about the possible mismatch between the versions of dynamically linked libraries used by \bcode{gfortran} and \bcode{OpenMPI}. We are not using any fancy feature here, so just ignore it and code will run just fine.
+    \item
+    Finally, let us launch the program with 40 cores!
+\begin{verbatim}
+[xintang@dn025 afv_replication]$ mpirun -np 40 ./debt_main_par.out
+\end{verbatim}
+    You will see some warning messages about the system environmental variables initially. Again, they will do no harm, just ignore them.
+\begin{verbatim}    
+> ibv_exp_query_device: invalid comp_mask !!! \
+    (comp_mask = 0xffffffffffffffff valid_mask = 0x1)
+[dn025][[12049,1],26][btl_openib_component.c:1670:init_one_device] \
+    error obtaining device attributes for mlx4_0 errno says Invalid argument
+--------------------------------------------------------------------------
+WARNING: There was an error initializing an OpenFabrics device.
+
+  Local host:   dn025
+  Local device: mlx4_0
+--------------------------------------------------------------------------
+ibv_exp_query_device: invalid comp_mask !!! \
+    (comp_mask = 0xffffffffffffffff valid_mask = 0x1)
+[dn025][[12049,1],13][btl_openib_component.c:1670:init_one_device] \
+    error obtaining device attributes for mlx4_0 errno says Invalid argument
+[1565186835.756078] [dn025:81591:0] mxm.c:196  MXM  WARN  \
+    The 'ulimit -s' on the system is set to 'unlimited'.
+[1565186835.756551] [dn025:81599:0] mxm.c:196  MXM  WARN  \
+    The 'ulimit -s' on the system is set to 'unlimited'.
+[1565186835.757112] [dn025:81569:0] mxm.c:196  MXM  WARN  \
+    The 'ulimit -s' on the system is set to 'unlimited'.
+...
+\end{verbatim}
+    After these warning messages, you should start seeing the normal printout from the program. For now, the code is set to replicate Figures 9 and 10 in the paper. So we are solving the government problem with 200 periods. Then using Autarky as initial starting point, simulate forward 100 periods to reach the steady state of open economy. The messages on the terminal are organized as follows. At first, the backward induction part when solving the government problem.
+\begin{verbatim}    
+ POLICY ITER     1   68.09246174870   68.09246174870    0.00000000000
+ t =   1   SS Debt 1 =   0.007846   SS Debt 2 =   0.007846  Error =     0.000000
+  Land Price =       0.189198      0.189198
+
+ POLICY ITER     2   26.38190931408   26.38190931408    0.00000000000
+ t =   2   SS Debt 1 =   0.014613   SS Debt 2 =   0.014613  Error =     0.000000
+  Land Price =       0.368034      0.368034
+  ...
+ POLICY ITER   198    0.00370471053    0.00404022301    0.00000000000
+ t = 198   SS Debt 1 =   0.461559   SS Debt 2 =   0.461593  Error =     0.000000
+  Land Price =       3.506217      3.506217
+
+ POLICY ITER   199    0.00454127798    0.00486093482    0.00000000000
+ t = 199   SS Debt 1 =   0.461562   SS Debt 2 =   0.461564  Error =     0.000000
+  Land Price =       3.506211      3.506211
+\end{verbatim}  
+    Then it shows the convergence of the distribution of entrepreneurs for the initial steady state.
+\begin{verbatim}    
+   Dist Iter =   250  8.201552E-05
+   Dist Iter =   500  1.261716E-07
+   Dist Iter =   750  1.982667E-10
+   Dist Iter =  1000  3.348815E-13
+ Infinite Horizon
+ Share top 1%,    Share top 10%,    Gini
+      5.830364     24.616527     26.915247
+\end{verbatim}
+    And finally, the transition path from autarky to open economy
+\begin{verbatim}          
+    1 0.2678 0.2678 0.0346 0.0346 3.2642 3.2642   5.6687  24.1195  25.6054
+    2 0.2890 0.2890 0.0339 0.0339 3.2872 3.2872   5.6944  24.2236  25.7124  
+...
+    99 0.4616 0.4616 0.0238 0.0238 3.5062 3.5062   5.7730  24.8920  26.7379
+    100 0.4616 0.4616 0.0238 0.0238 3.5062 3.5062   5.7728  24.8919  26.7377
+
+    Debt-Output Ratio =   0.46156168761281585       0.46156368575488221
+
+    Time =     450.5362    
+\end{verbatim}    
+    In total, it takes only 7.5 minutes to run!
+    \item
+    The results are exported as text files under \bcode{./results/}. The policy functions of the government are saved in \bcode{DebPol1.txt} and \bcode{DebPol2.txt}. Element $i,j$ there reports the for government 1 (or 2), if $(B_1,B_2) = (b_i,b_j)$, what would be the debt choice by government 1 (or 2), where $b_i$ is the bond grid, which is set to 20 points between 0 and 0.8. These results can be used to produce Figure N2 in the Appendix.
+    
+    Files \bcode{Debt1\_seqa.txt} shows the evolution of debt when the economy opens up. The first $i$th elements of the $i$th row shows if the transition path if the time horizon is $t = i$. So the blue dotted curves in Figure 9 are plotted respectively using the first 200, 100, and 50 elements of the 200th, 100th, and 50th rows.
+    
+    The blue line in Figure 10 can be produced using the second column printed on the terminal:
+\begin{verbatim}    
+    1 0.2678 0.2678 0.0346 0.0346 3.2642 3.2642   5.6687  24.1195  25.6054
+    2 0.2890 0.2890 0.0339 0.0339 3.2872 3.2872   5.6944  24.2236  25.7124
+...
+    99 0.4616 0.4616 0.0238 0.0238 3.5062 3.5062   5.7730  24.8920  26.7379
+    100 0.4616 0.4616 0.0238 0.0238 3.5062 3.5062   5.7728  24.8919  26.7377
+\end{verbatim}    
+    \item
+    The code is paralleled where the Nash Equilibrium is solved. When solving for the Nash Equilbrium, for each combination of current debt $(B_{1,t},B_{2,t})$, the government calculates the potential welfare of each possible combination of debt choice $(B_{1,t+1},B_{2,t+1})$, where $(B_{1,t+1},B_{2,t+1})$ belongs to a denser grids. At this moment, the number of grids is set to \bcode{maxgrid = 200} declared in \bcode{mod\_param.f90}. Each core computes a fraction of the 200 points. For instance, in the case of 4 cores, cores 1 to 4 computes $B_{1,t+1} = [b_1,\cdots,b_{50}], B_{2,t+1} = [b_1,\cdots,b_{200}]$ to $B_{1,t+1} = [b_{151},\cdots,b_{200}], B_{2,t+1} = [b_1,\cdots,b_{200}]$. So when setting the number of nodes \bcode{np} used, please make sure \bcode{np} can always be divided by \bcode{maxgrid}.
+    \item
+    To run the code on Ubuntu is much simpler. First make sure that all the libraries are correctly installed.
+\begin{verbatim}
+$ sudo apt-get install build-essential
+  sudo apt-get install gfortran
+  sudo apt-get install git
+  sudo apt-get install libblas-dev
+  sudo apt-get install libatlas-base-dev
+  sudo apt-get install liblapack-dev
+  sudo apt-get install openmpi-bin
+  sudo apt-get install openmpi-doc
+  sudo apt-get install libopenmpi-dev
+\end{verbatim}
+    Similarly cloning the \bcode{mpi\_debt} branch of the GitHub repository, create the working directories, compile \bcode{MINPACK} to relocatable binary format, and then compile the program using
+\begin{verbatim}
+$ mpif90 ./src/mod_param.f90 ./src/mod_global.f90 ./src/mod_routines.f90 \
+     ./src/solve_system.f90 ./src/debt_main.f90 \
+     ./obj/minpack.o -llapack -latlas -lblas \
+     -o debt_main_par.out -Ofast -march=native -Wall
+\end{verbatim}
+    Notice that in the above command, \bcode{LAPACK, ATLAS} and \bcode{BLAS} are linked dynamically. On a personal computer, it is likely that you have the authorization to run bash script. So the above command is conveniently stored in the bash script \bcode{compile.sh}. Each time when the program needs to be compiled, simply invoke the bash script
+\begin{verbatim}
+$ ./compile.sh
+\end{verbatim}
+    The system will do the work. The same command is used to run the program.
+\begin{verbatim}
+$ mpirun -np 4 ./debt_main_par.out
+\end{verbatim}
+    On my desktop with 4 cores, it takes about 20 minutes to run the code.
+\end{enumerate}
+
+\end{document}

@@ -3,9 +3,16 @@
 ! -----------------------------------------------------------------------------
 !   
 ! Purpose:
-!     - Main subroutine implementing Property 1
+!     - A collection of major subroutines:
+!       1. SolveSystem: implements Property 1 in the Appendix
+!       2. NashSolution: Solve the Nash Equilibrium
+!       3. Find_ss: Find the implied steady state bond
+!       4. ss_distribution: find the stationary distribution of entrepreneurs
+!       5. t_step_distribution: simulates the distribution forward
+!
 ! Author:
 !     Xin Tang @ IMF, Summer 2019
+!     Based on Vincenzo Quadrini's original code
 !  
 ! Record of Revisions:
 !         Date:                 Description of Changes
@@ -17,7 +24,6 @@
 !
 ! Library Used:
 !   - MINPACK: by source code
-!   - LAPACK, ATLAS, and BLAS: by binary library
 ! =============================================================================
 
 subroutine SolveSystem(t,b1,b2,b1pr,b2pr,retval)

@@ -7,18 +7,20 @@
 !       and the Rising Public Debt."
 ! Author:
 !     Xin Tang @ IMF, Summer 2019
+!     Based on Vincenzo Quadrini's original code
 !  
 ! Record of Revisions:
 !         Date:                 Description of Changes
 !     ===========        =================================
 !      07/23/2019:          Original Code: No paralleling
+!      08/05/2019:               Paralleled with MPI
 !
 ! Compiling Environment:
 !   GNU gfortran on Ubuntu 16.04
 !
 ! Library Used:
 !   - MINPACK: by source code
-!   - LAPACK, ATLAS, and BLAS: by binary library
+!   - OpenMPI
 ! =============================================================================
 
 program debt_main
@@ -56,12 +58,13 @@ program debt_main
     real(dp) :: ssb, ssp
     real(dp), dimension(3) :: stats
 
+    ! MINPACK and LAPACK working variables
     real(dp), parameter :: tol = 1e-15
     integer, parameter :: lwa = (2*(3*2+13))/2
     real(dp), dimension(lwa) :: wa
     integer :: info
 
-    ! parallel computing
+    ! Parallel computing
     integer :: ierr,nproc,ni_i,ibegin,iend
     real(dp), dimension(:), allocatable :: val1_ind,val2_ind
     real(dp), dimension(:), allocatable :: val1_agg,val2_agg
@@ -309,7 +312,7 @@ program debt_main
 
         ! compute the implied steady state debt level when
         ! infinite horizon policies are approximated using
-        ! t period problem
+        ! nt-indt period problem
         debtGuess = bbar
         call hybrd1(find_ss,2,debtGuess,fvec,tol,info,wa,lwa)
         fnorm = sqrt(sum(fvec**2,1))
@@ -330,6 +333,7 @@ program debt_main
 
     end do time
 
+    ! export government policy from an NT period problem
     if (myrank == root) then
         open(1,file='./results/DebPol1.txt',form='formatted')
         do indb = 1,nb
@@ -344,19 +348,18 @@ program debt_main
         close(1)    
     end if
 
-!----------------------------------------------------------------!
-!--------------COMPUTE TRANSITION INFINITE HORIZON---------------!
-!----------------------------------------------------------------!
+!=======================================================================!
+!               COMPUTE THE TRANSITIONAL DYNAMICS                       !
+!=======================================================================!
+    ! used when checking the steady state level
     ! ssb = debtGuess(1)
     ! ssp = retval(3)
     ! write (*,*) 'ssb = ', ssb, 'ssp = ', ssp
 
     ! start from autarky
-    ! ssb = 0.4616_dp
-    ! ssp = 3.5062_dp
     ssb = 0.2678_dp
     ssp = 3.5205_dp
-
+    ! compute the stationary distribution at autarky
     call ss_distribution(ssb,ssp,Mea_ss,stats)
 
     if (myrank == root) then
@@ -366,6 +369,7 @@ program debt_main
     end if
 
     ! simulate the transition path to open economy
+    ! this part produces Figure 10
     b1 = max(ssb,bmin)
     b2 = max(ssb,bmin)
     Mea = Mea_ss
@@ -412,6 +416,8 @@ program debt_main
     debt1_seqa = -1.0_dp
     debt2_seqa = -1.0_dp
 
+    ! simulate bond path starting from zero debt
+    ! this part produces Figure 9
     do ntt = nt,1,-1
         b1 = 0.0_dp
         b2 = 0.0_dp
