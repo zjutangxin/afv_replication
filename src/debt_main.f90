@@ -3,17 +3,17 @@
 ! -----------------------------------------------------------------------------
 !   
 ! Purpose:
-!     - Main function for replicating "Financial Globalization, Inequality,
-!       and the Rising Public Debt."
+!     - One country version of Saving_Glut paper
+!     - For testing purpose
 ! Author:
 !     Xin Tang @ IMF, Summer 2019
-!     Based on Vincenzo Quadrini's original code
 !  
 ! Record of Revisions:
 !         Date:                 Description of Changes
 !     ===========        =================================
 !      07/23/2019:          Original Code: No paralleling
 !      08/05/2019:               Paralleled with MPI
+!      10/02/2019:               One country version   
 !
 ! Compiling Environment:
 !   GNU gfortran on Ubuntu 16.04
