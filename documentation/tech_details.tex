@@ -145,20 +145,283 @@
 }
 \renewcommand{\lstlistingname}{Source Code}
 
-\title{\vspace{-1cm}\Large{{\textsf{Replication of Financial Globalization, Inequality, and the Rising Public Debt}}}}
+\title{\vspace{-1cm}\Large{{\textsf{The Saving Glut Paper: Some Algebra}}}}
 \author{\normalsize\textsc{Xin Tang} \\ \normalsize\textsc{International Monetary Fund}}
 \date{\normalsize\today}
 
 \begin{document}
 \maketitle
 
-This note contains the most important technical details related to the replication of \textit{Financial Globalization, Inequality, and the Rising Public Debt}. Section \rom{1} explains formal the definition of the equilibrium. Section \rom{2} provides the pseudo code.
+This note writes down the model and the algorithm. We study a one country model with foreign debt demand as a function of interest rate $D_{t+1} = D(R_t)$.
 
 \section{The Model and the Equilibrium}
 
+\subsection{Setup}
+
+Consider a $T$ period problem. There are two types of agents: entrepreneurs with measure one, and workers with measure $\Phi$. The preferences are the same:
+\begin{equation*}
+    \sum_{t=0}^T \beta^t \log c_t.
+\end{equation*}
+Land $k$ is internationally immobile. It has a total supply of one and its price is $p_t$. Entrepreneurs combine land and labor to produce, using the production function
+\begin{equation*}
+    y = F(z,k,l) = z^{\theta}k^{\theta}l^{1-\theta}.
+\end{equation*}
+$z$ is i.i.d productivity shock. Land return is also subject to capital gains shock
+\begin{equation}
+    \left(\frac{z-\overline{z}}{\overline{z}}\right) p_{t}k,
+\end{equation}
+which is linear in $k$.
+
+Besides land, entrepreneurs also have access to government bond $b_t$ which is risky free. $b_t$ is internationally mobile. Its interest rate is $R_t$. Let transfers be $\tau_t$, entrepreneurs budget constraint becomes
+\begin{equation*}
+    c_t + p_t k_{t+1} + \frac{b_{t+1}}{R_t} = A(z_t,w_t)k_t + p_t k_t + b_t + \tau_t,
+\end{equation*}
+where $A(z_t,w_t)$ is returns to land which is i.i.d. The entrepreneurs's problem is then
+\begin{align*}
+    & \max_{c_t,k_{t+1},b_{t+1}} \sum_{t=0}^T \beta^t \log c_t \\
+    & s.t. \\
+    & \qquad c_t + p_t k_{t+1} + \frac{b_{t+1}}{R_t} = A(z_t,w_t)k_t + p_t k_t + b_t + \tau_t.
+\end{align*}
+
+Each worker has a labor endowment of $1/\Phi$. They have no access to the financial market. Hence their budget constraint is
+\begin{equation*}
+    c_t = w_t \left(\frac{1}{\Phi} \right) + \tau_t.
+\end{equation*}
+
+The government issues public debt $B_t$ to make social transfers. The government budget constraint is
+\begin{equation*}
+    (1+\Phi)\tau_{t} + B_{t} = \frac{B_{t+1}}{R_{t}}.
+\end{equation*}
+Total foreign demand on government bond is a function of interest rate $R_t$:
+\begin{equation*}
+    D_{t+1} = D(R_t).
+\end{equation*}
+The government is utilitarian:
+\begin{equation*}
+    \max_{B_{t+1}} \sum_{t=0}^T \left[ \Phi W_t(B_t,B_{t+1}) + V_t(B_t,B_{t+1}) \right],
+\end{equation*}
+where $W_t$ and $V_t$ are the indirect utility of workers and entrepreneurs at $t$.
+
+The politico-economic equilibrium is defined as follows.
+\begin{definition}
+The politico-economic equilibrium consists of public debt sequence $\{B_t\}_{t=0}^T, B_{T+1} = 0$, price sequences $\{w_t, p_t, R_t\}_{t=0}^T$, entrepreneurs's decisions $\{c_t^i, l_t^i, k_{t+1}^i, b_{t+1}^i\}_{t=0}^T$, workers's consumption $\{c^w_t\}_{t=0}^T$ and transfers $\tau_t$ such that
+\begin{enumerate}[(i)]
+    \item
+    Given $\{B_{t}\}_{t=0}^{T+1}$ and $\{w_{t},p_{t},R_{t}\}_{t=0}^T$, $\{c^i_{t},l^i_{t},k^i_{t+1},b^i_{t+1}\}_{t=1}^T$ and $\{c^w_{t}\}_{t=1}^T$ solve the entrepreneurs's and workers's problems.
+    \item
+    Given $R_t$, for each $t$, foreign debt demand is given by $D_{t+1} = D(R_t)$.
+    \item
+    Given $\{B_{t}\}_{t=0}^{T+1}$, price sequences clear all markets
+    \begin{itemize}
+        \item
+        Labor markets:
+        \begin{equation*}
+            \int_i l^i_{t} di = 1.
+        \end{equation*}
+        \item
+        Land markets:
+        \begin{equation*}
+            \int_i k^i_{t+1} di = 1.
+        \end{equation*}
+        \item
+        International bond markets:
+        \begin{equation*}
+            \int_i b_{t+1}^i di + D_{t+1} = B_{t+1}.
+        \end{equation*}
+    \end{itemize}
+    \item
+    Government debt sequence $\{B_{t}\}_{t=0}^{T+1}$ solves the government problem
+    \begin{equation*}
+        \max_{B_{t+1}} \sum_{t=0}^T \left[ \Phi W_t(B_t,B_{t+1}) + V_t(B_t,B_{t+1}) \right],
+    \end{equation*}
+    subject to the government budget constraint.
+\end{enumerate}
+\end{definition}
+
+\subsection{Solving the Equilibrium}
+
+Luckily, all the analytical properties except the symmetry one (Corollary 1) still hold. I omit most of the algebra here. But the results themselves are still presented, just for bookkeeping. To solve the equilibrium, we first need to solve the entrepreneurs's problem. We first define excess debt demand
+\begin{equation*}
+    \tilde{b}^i_t = b^i_t - \frac{B_t}{1+\Phi},
+\end{equation*}
+and substitute out government transfer $\tau_t$. This allows us to write the entrepreneurs's problem as:
+\begin{align*}
+    & \max_{c_t,k_{t+1},\tilde{b}_{t+1}} \sum_{t=0}^T \beta^t \log c_t \\
+    & s.t. \\
+    & c_t + p_t k_{t+1} + \frac{\tilde{b}_{t+1}}{R_t} = A(z_t,w_t)k_t + p_t k_t + \tilde{b}_t.
+\end{align*}
+
+It is a standard life-cycle portfolio choice problem as in \citet{Samuelson:1969}, which can be decomposed to an intra-temporal portfolio choice problem and an inter-temporal consumption-saving problem.
+\begin{proposition}
+\label{prop:lifecycle}
+Given price sequences $\{w_t, p_t, R_t\}$, if we define total allocatable wealth as
+\begin{equation*}
+    a^i_t = A(z^i_t,w_t)k^i_t + p_t k^i_t + \tilde{b}^i_t,
+\end{equation*}
+then the consumption and assets demand are all linear in $a^i_t$:
+\begin{align*}
+    c^i_t &= (1-\eta_t)a^i_t \\
+    p_t k^i_{t+1} &= \phi_t \eta_t a^i_t, \\
+    \frac{\tilde{b}^i_{t+1}}{R_t} &= (1-\phi_t)\eta_t a^i_t,
+\end{align*}
+where $\eta_t$ and $\phi_t$ are defined as
+\begin{equation*}
+    \eta_t = \frac{\beta}{1+\beta^{T-t}/(\sum_{s=1}^{T-t}\beta^{s-1})},\quad \E_t \left\{\frac{R_t}{\left[\frac{A(z^i_{t+1},w_{t+1})+p_{t+1}}{p_t} \right]\phi_t + R_t(1-\phi_t)} \right\} = 1.
+\end{equation*}
+\end{proposition}
+
+Using Proposition \ref{prop:lifecycle}, we can solve the aggregate variables in the competitive equilibrium with debt sequence given.
+\begin{proposition}
+\label{prop:competitive}
+Given debt sequence $\{{B}_{t}\}_{t=0}^{T+1}$, the equilibrium wage is constant $w_{t} = \overline{w} = (1-\theta)\overline{z}^{\theta}$. The remaining price and macro aggregates are
+\begin{align*}
+    \phi_t &= \E_t\left[\frac{A(z^i_{t+1})+p_{t+1}}{A(z^i_{t+1})+p_{t+1}+\tilde{b}_{t+1}} \right], \\
+    p_t    &= \frac{\eta_t\phi_t(\overline{A}+\tilde{b}_t)}{1-\eta_t\phi_t}, \\
+    R_t    &= \frac{(1-\eta_t\phi_t)\tilde{b}_{t+1}}{\eta_t(1-\phi_t)(\overline{A}+\tilde{b}_t)}, \\
+    c^e_t  &= \overline{A}+\tilde{b}_t-\frac{\tilde{b}_{t+1}}{R_t}, \\
+    c^w_t  &= \overline{w} + \left(\frac{\Phi}{1+\Phi} \right)\left(\frac{B_{t+1}}{R_t}-B_t \right),
+\end{align*}
+where $\overline{A} = \sum_l A(z_l)\mu_l$.
+\end{proposition}
+The dependence on foreign demand is by $\tilde{b}_{t+1}$ through the debt market.
+
+Finally, given the solution to the competitive equilibrium, we characterize the solution to the government problem. We show that the sequential problem of the government is equivalent to the following recursive problem.
+\begin{proposition}
+Given current outstanding debt $B_t$ and the debt issuance function $\mathcal{B}_{t+1}({B}_{t+1})$ in the next period, the period $t$ problem of the government
+\begin{equation}
+    \max_{B_{j,t+1}}\left\{\Phi W_{t}({B}_t,\vec{B}_{t+1}) + V_{t}({B}_t,\vec{B}_{t+1}) \right\},
+\end{equation}
+can be defined recursively by
+\begin{equation}
+    W_{t}({B}_t,B_{t+1}) = \log \left(\overline{w} +\nu\frac{B_{t+1}}{R_{t}} - \nu B_{t} \right)+\beta W_{t+1}({B}_{t+1},\mathcal{B}_{t+1}({B}_{t+1})),
+\end{equation}
+and
+\begin{align}
+    V_{t}({B}_t,{B}_{t+1}) = &\log (1-\eta_t) + \left(\frac{1}{1-\eta_t} \right)\left\{\E_t[\log (A(z^i_{t}) + \tilde{b}_t + p_{t})] + \eta_t\log \left(\frac{\eta_{t}\phi_{t}}{p_{t}} \right) \right\} \nonumber \\
+        & +\beta V_{t+1}({B}_{t+1},\mathcal{B}_{t+1}({B}_{t+1})).
+\end{align}
+As before,
+\begin{equation*}
+    \nu = \frac{\Phi}{1+\Phi}.
+\end{equation*}
+\end{proposition}
 
 \section{The Algorithm}
 
+\subsection{When $D_{t+1}$ Is Constant}
+
+The case where $D_{t+1}$ is constant $\overline{D}$ is relatively easy to solve. Because a constant $\overline{D}$ does not break the 1-1 mapping between $B_t$ and $\tilde{b}_t$, we do not need to track another state variable. The following proposition can be used to solve the model by backward induction.
+\begin{proposition}
+\label{prop:algo_const}
+Given $B_{t}, B_{t+1}, p_{t+1}, V_{t+1}, W_{t+1}$, all macro aggregates in period $t$ can be solved in the following order.
+\begin{align*}
+    \eta_t &= \frac{\beta}{1+\beta^{T-t}/\sum_{s=1}^{T-t}\beta^{s-1}} = \frac{\beta(1-\beta^{T-t})}{1-\beta^{T-t+1}}, \\
+    \tilde{b}_{t} &= \nu B_t - \overline{D} \\
+    \tilde{b}_{t+1} &= \nu B_{t+1} - \overline{D} \\
+    \phi_{t} &= \E\left[\frac{A_{t+1}+p_{t+1}}{A_{t+1}+p_{t+1}+\tilde{b}_{t+1}} \right], \\
+    p_{t} &= \frac{\eta_t \phi_{t}(\overline{A}+\tilde{b}_{t})}{1-\eta_t \phi_{t}}, \\
+    R_{t} &= \frac{(1-\eta_t\phi_{t})\tilde{b}_{t+1}}{\eta_t(1-\phi_{t})(\overline{A}+\tilde{b}_{t})}, \\
+    \hat{a}^i_{j,t} &= A^i_{t}+p_{t}+\tilde{b}_{t}, \\
+    V_{t} &= \log(1-\eta_t) + \left(\frac{1}{1-\eta_t}\right)\left[\eta_t\log\left(\frac{\eta_t\phi_{t}}{p_{t}} \right)+\E\log \hat{a}^i_{t} \right]+\beta V_{t+1}, \\
+    W_{t} &= \log\left(\overline{w}+\frac{\nu B_{t+1}}{R_{t}}-\nu B_{t} \right) + \beta W_{t+1}.
+\end{align*}
+\end{proposition}
+
+Proposition \ref{prop:algo_const} can then be used to solve the problem by backward induction. For convenience, we define
+\begin{align*}
+    \vec{X}_t &= \{B_t, B_{t+1}, p_{t+1}, V_{t+1}, W_{t+1} \}, \\
+    \vec{Y}_t &= \{ p_t, V_t, W_t \}.
+\end{align*}
+hence Proposition \ref{prop:algo_const} defines $\vec{Y}_t = \Upsilon(\vec{X}_t)$.
+
+The state space is $\vec{S} = B$. The pseudo-code is given as follows.
+\begin{itemize}
+    \item
+    Solution at $t = T$:
+    \begin{enumerate}
+        \item
+        By assumption, we have $B_{T+1} = p_{T+1} = V_{T+1} = W_{T+1} = 0$.
+        \item
+        For each grid $B_t \in \vec{S}$, we can solve $\vec{Y}_T = \{p_T, V_T, W_T \}$.
+    \end{enumerate}
+    \item
+    Solution at $t < T$: The problem here is considerably easier, since we do not have to solve the Nash Equilibrium. Now what needs to be solved is the optimal debt level $B^*_{t+1}$ for each $B_t \in \vec{S}$. Notice that for each grid $B_t$ and each debt choice $B_{t+1}$, the equilibrium can be characterized by Proposition \ref{prop:algo_const}. Importantly, it characterizes the level of $V_t$ and $W_t$ for each debt choice $B_{t+1}$ and outstanding debt $B_t$. A simple grid search thus yields the optimal debt $B^*_{t+1}$ for each $B_t$.
+\end{itemize}
+The forward simulation is straightforward to carry out.
+
+\subsection{When $D_{t+1}$ Is a Function of $R_t$}
+
+The algorithm to solve this version of the model follows broadly the logic before. The only difference here is that in the absence of symmetry, the closed-form relation between $\tilde{b}_t$ and $B_t$ no longer holds. As a result, current excess debt holding $\tilde{b}_t$ enters the problem as a new state variable. Specifically, we can show the following proposition holds.
+\begin{proposition}
+\label{prop:algorithm}
+Given $B_{t}, B_{t+1}, \tilde{b}_t, p_{t+1}, V_{t+1}, W_{t+1}$, all macro aggregates in period $t$ can be solved in the following order.
+\begin{enumerate}
+    \item
+    Saving rate:
+    \begin{equation*}
+        \eta_t = \frac{\beta}{1+\beta^{T-t}/\sum_{s=1}^{T-t}\beta^{s-1}} = \frac{\beta(1-\beta^{T-t})}{1-\beta^{T-t+1}}.
+    \end{equation*}
+    \item
+    Interest rate: Debt market clearing condition implies that
+    \begin{equation*}
+        \tilde{b}_{t+1} = \nu B_{t+1} - D(R_t).
+    \end{equation*}
+    Substitute the above equation into the expression for interest rate, we have
+    \begin{equation*}
+        R_t = \frac{(1-\eta_t \phi_t)[\nu B_{t+1}-D(R_t)]}{\eta_t (1-\phi_t)(\overline{A}+\tilde{b}_t)},
+    \end{equation*}
+    with
+    \begin{equation*}
+        \phi_t = \E \left[\frac{A_{t+1} + p_{t+1}}{A_{t+1} + p_{t+1} + \nu B_{t+1} - D(R_t)} \right].
+    \end{equation*}
+    The above two equations implicitly define an equation for $R_t$.
+    \item
+    With $R_t$, the remaining variables can be solved in the following order:
+    \begin{align*}
+        \tilde{b}_{t+1} &= \nu B_{t+1} - D(R_t), \\
+        \phi_{t} &= \E\left[\frac{A_{t+1}+p_{t+1}}{A_{t+1}+p_{t+1}+\tilde{b}_{t+1}} \right], \\
+        p_{t} &= \frac{\eta_t \phi_{t}(\overline{A}+\tilde{b}_{t})}{1-\eta_t \phi_{t}}, \\
+        \hat{a}^i_{t} &= A^i_{t}+p_{t}+\tilde{b}_{t}, \\
+        V_{t} &= \log(1-\eta_t) + \left(\frac{1}{1-\eta_t}\right)\left[\eta_t\log\left(\frac{\eta_t\phi_{t}}{p_{t}} \right)+\E\log \hat{a}^i_{t} \right]+\beta V_{t+1}, \\
+        W_{t} &= \log\left(\overline{w}+\frac{\nu B_{t+1}}{R_{t}}-\nu B_{t} \right) + \beta W_{t+1}.
+    \end{align*}
+\end{enumerate}
+\end{proposition}
+
+Proposition \ref{prop:algorithm} can then be used to solve the problem by backward induction. Again, we define
+\begin{align*}
+    \vec{X}_t &= \{B_t, B_{t+1}, \tilde{b}_t, p_{t+1}, V_{t+1}, W_{t+1} \}, \\
+    \vec{Y}_t &= \{ p_t, V_t, W_t \}.
+\end{align*}
+hence Proposition \ref{prop:algorithm} defines $\vec{Y}_t = \Upsilon(\vec{X}_t)$.
+
+The state space is $\vec{S} = B \times \tilde{b}$. The pseudo-code is given as follows.
+\begin{itemize}
+    \item
+    Solution at $t = T$:
+    \begin{enumerate}
+        \item
+        By assumption, we have $B_{T+1} = p_{T+1} = V_{T+1} = W_{T+1} = 0$.
+        \item
+        For each grid $(B_t, \tilde{b}_t) \in \vec{S}$, we can solve $\vec{Y}_T = \{p_T, V_T, W_T \}$.
+    \end{enumerate}
+    \item
+    Solution at $t < T$: The problem is a bit different here. The good news is that we do not have to solve for the Nash Equilibrium and hence the best response function. However, the dependence of $\vec{Y}_t$ on $\tilde{b}_t$ causes some numerical complexity. Essentially, what we want is to compute for each grid $(B_t, \tilde{b}_t) \in \vec{S}$, the optimal debt level $B^*_{t+1}$. This is done as follows.
+    \begin{enumerate}
+        \item
+        For each grid $(B_t, \tilde{b}_t) \in \vec{S}$ and each debt choice $B_{t+1}$, items 1 and 2 in Proposition \ref{prop:algorithm} can be invoked to compute the corresponding interest rate $R_t$.
+        \item
+        To do this, for each $R_t$, we can calculate a level of $\tilde{b}_{t+1}$. Together with $B_{t+1}$, $\vec{Y}_{t+1}$ can be found using interpolation. This allows us to compute $\phi_t$ and hence interest rate $R_t$.
+        \item
+        Item 3 of Proposition \ref{prop:algorithm} can then be used to solve the remaining variables. Notice here that $V_{t+1}$ and $W_{t+1}$ requires interpolation based on $(B_{t+1}, \tilde{b}_{t+1})$.
+        \item
+        Now that we have $V_t$ and $W_t$ for each $B_{t+1}$, a simple grid search yields the optimal debt $B^*_{t+1}$ as a function of $\vec{S}$.
+        \item
+        Apply Proposition \ref{prop:algorithm} again at $B^*_{t+1}(B_t, \tilde{b}_t)$, $\vec{Y}_t$ can be constructed which completes the backward induction process.
+    \end{enumerate}
+\end{itemize}
+
+With the sequential solution characterized as above, we can simulate the model forward from any $(B_0, \tilde{b}_0)$.
 
 \bibliography{D:/Dissertation/Literature/Dissertation1}
 \bibliographystyle{aea}

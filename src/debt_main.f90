@@ -12,6 +12,7 @@
 !         Date:                 Description of Changes
 !     ===========        =================================
 !      07/23/2019:          Original Code: No paralleling
+!      11/11/2019:           Introducing Foreign Demand 
 !
 ! Compiling Environment:
 !   GNU gfortran on Ubuntu 16.04
