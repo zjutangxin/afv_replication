@@ -22,7 +22,6 @@ theta = 0.2;
 zbar = 1.0;
 zmin = 0.86;
 zmax = 2.0*zbar - zmin ;
-a_min = 1e-9;
 
 wbar = (1-theta)*zbar^theta ;
 wgt1 = 0.796 ;
@@ -89,10 +88,7 @@ for indb = 1:1:nb
    afun = theta*zvec/(zbar^(1-theta))+(zvec-zbar)*p1pr/zbar;
    phi1 = ((afun+p1pr)./(afun+p1pr+be1pr))*pzvec ;
    afunbar = theta*zbar/(zbar^(1-theta));
-   p1 = eta_t*phi1*(afunbar+be1)/(1-eta_t*phi1);
-   R1 = 1.0 ;
-   ahat = afun + p1 + be1 ;
-   
+   p1 = eta_t*phi1*(afunbar+be1)/(1-eta_t*p)
    
 end
 
