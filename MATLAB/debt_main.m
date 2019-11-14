@@ -24,22 +24,24 @@ zmin = 0.86;
 zmax = 2.0*zbar - zmin ;
 a_min = 1e-9;
 
-dforeign = 0.10 ;
+dforeign = 1e-6 ;
+smooth = false; 
 
 wbar = (1-theta)*zbar^theta ;
 wgt1 = 0.796 ;
 surv_rate = 0.975;
 rbar = 0.03 ;
 bbeta = surv_rate/(1+rbar);
-nt = 20 ;
+nt = 100 ;
+% nsim = 25;
 
 % initialization
-nb = 40;
-maxgrid = 500;
+nb = 50;
+maxgrid = 1000;
 nz = 21;
 
 % bmin = 0.0;
-bmin = dforeign/wgt1 + 1e-9 ;
+bmin = dforeign/wgt1 + 1e-10 ;
 bmax = bmin+0.8;
 bVec = linspace(bmin,bmax,nb);
 DebChoiceGrid = linspace(bmin,bmax,maxgrid);
@@ -50,7 +52,8 @@ pzvec = pzvec/sum(pzvec);
 
 % variables
 % initialized for nt+1
-v1wMx = zeros(nb,1);v1eMx = zeros(nb,1);
+v1wMx = zeros(nb,1);
+v1eMx = zeros(nb,1);
 val1Mx = zeros(nb,1);
 Pri1Mx = zeros(nb,1);
 R1Mx = zeros(nb,1);
@@ -160,6 +163,7 @@ for indt = nt-1:-1:1
           b1pr = DebChoiceGrid(indbp) ; 
           be1 = wgt1*b1 - dforeign ;
           be1pr = wgt1*b1pr - dforeign ;
+%           be1pr = wgt1*b1pr ;
           
           alfa_t = (1-bbeta^(nt-indt+1))/(1-bbeta);
           eta_t = (bbeta-bbeta^(nt-indt+1))/(1-bbeta^(nt-indt+1)) ;
@@ -171,7 +175,8 @@ for indt = nt-1:-1:1
           p1 = eta_t*phi1*(afunbar+be1)/(1-eta_t*phi1);
           
           R1 = (1-eta_t*phi1)*be1pr/(eta_t*(1-phi1)*(afunbar+be1));
-          ahat = afun + p1 + be1 ;
+          afun1 = theta*zvec/(zbar^(1-theta))+(zvec-zbar)*p1/zbar;
+          ahat = afun1 + p1 + be1 ;
           ahat = max(ahat,a_min) ;
           EU1_e = log(1-eta_t)+(alfa_t-1)*log(eta_t*phi1/p1);
           EU1_e = EU1_e + alfa_t*log(ahat)*pzvec ;
@@ -200,11 +205,26 @@ for indt = nt-1:-1:1
        DDebPol1(indb) = DebChoiceGrid(xoptim) ;
    end
    
-   % check convergence of policy
-   disp(['policy iter = ',num2str(nt-indt),', error = ', ...
-       num2str(sum(abs(DebPol1-DDebPol1))/nb)])
+   % smooth the policy function
+   if smooth == true
+        DebPol_coef = polyfit(bVec',DDebPol1,2);
+        DebPol_smooth = DebPol_coef(1)*bVec.^2 + DebPol_coef(2)*bVec ...
+                + DebPol_coef(3);
+        DebPol_smooth = DebPol_smooth';
+        % check convergence of policy
+        disp(['policy iter = ',num2str(nt-indt),', error = ', ...
+            num2str(sum(abs(DebPol1-DebPol_smooth))/nb)])            
+   else
+        % check convergence of policy
+        disp(['policy iter = ',num2str(nt-indt),', error = ', ...
+            num2str(sum(abs(DebPol1-DDebPol1))/nb)])                   
+   end
    
-   DebPol1 = DDebPol1 ;
+   if smooth == true
+        DebPol1 = DebPol_smooth ;
+   else
+        DebPol1 = DDebPol1 ;
+   end
    DebPol1_seqa(indt,:) = DebPol1 ;
    
    % Compute the equilibrium at the optimal policy
@@ -225,7 +245,8 @@ for indt = nt-1:-1:1
        p1 = eta_t*phi1*(afunbar+be1)/(1-eta_t*phi1);
           
        R1 = (1-eta_t*phi1)*be1pr/(eta_t*(1-phi1)*(afunbar+be1));
-       ahat = afun + p1 + be1 ;
+       afun1 = theta*zvec/(zbar^(1-theta))+(zvec-zbar)*p1/zbar;
+       ahat = afun1 + p1 + be1 ;
        ahat = max(ahat,a_min) ;
        EU1_e = log(1-eta_t)+(alfa_t-1)*log(eta_t*phi1/p1);
        EU1_e = EU1_e + alfa_t*log(ahat)*pzvec ;
@@ -265,11 +286,25 @@ end
 
 disp(['time = ', num2str(toc)]);
 
-% save('./results/autarky.mat');
-% save('./results/df_1e2.mat');
+% simulate the economy forward
+nsim = nt;
+bsim = zeros(nsim,1);
+bsim(1,1) = bVec(1);
+for indsim = 1:1:nsim-1
+    bsim(indsim+1,1) = interp1(bVec,DebPol1_seqa(indsim,:),...
+        bsim(indsim));
+end
+plot(bsim);
 
+% find steady state debt using nt/2
+pt = nt/2;
+fun = @(x) x - interp1(bVec,DebPol1_seqa(pt,:),x);
+bguess = (bmin + bmax)/2;
+ss_debt = fzero(fun,bguess);
+disp(['ss_debt = ', num2str(ss_debt)])
 
-
+% save('./results/autarky_100_dense_smooth.mat');
+save('./results/df1e6_100_dense_discrete.mat');
 
 
 
