@@ -24,8 +24,8 @@ zmin = 0.86;
 zmax = 2.0*zbar - zmin ;
 a_min = 1e-9;
 
-dforeign = 1e-6 ;
-smooth = false; 
+dforeign = 1e-1 ;
+smooth = false ; 
 
 wbar = (1-theta)*zbar^theta ;
 wgt1 = 0.796 ;
@@ -36,8 +36,8 @@ nt = 100 ;
 % nsim = 25;
 
 % initialization
-nb = 50;
-maxgrid = 1000;
+nb = 70;
+maxgrid = 1500;
 nz = 21;
 
 % bmin = 0.0;
@@ -144,18 +144,18 @@ phi1_seqa(indt,:) = phi1Mx ;
 
 % Period t
 for indt = nt-1:-1:1
-%     if indt == 11
-%         pause;
-%     end
+    if indt == 50
+        pause;
+    end
    % compute the optimal policy
    for indb = 1:1:nb
-%        v1wtemp = zeros(maxgrid,1);
-%        v1etemp = zeros(maxgrid,1);
-%        r1temp = zeros(maxgrid,1);
-%        c1wtemp = zeros(maxgrid,1);
-%        v1wprtemp = zeros(maxgrid,1);
-%        p1temp = zeros(maxgrid,1);
-%        phi1temp = zeros(maxgrid,1);
+       v1wtemp = zeros(maxgrid,1);
+       v1etemp = zeros(maxgrid,1);
+       r1temp = zeros(maxgrid,1);
+       c1wtemp = zeros(maxgrid,1);
+       v1wprtemp = zeros(maxgrid,1);
+       p1temp = zeros(maxgrid,1);
+       phi1temp = zeros(maxgrid,1);
 
        val1temp = zeros(maxgrid,1);
        b1 = bVec(indb) ;
@@ -190,13 +190,13 @@ for indt = nt-1:-1:1
           v1w = U1_w + bbeta*v1wpr;
           v1e = EU1_e + bbeta*v1epr;
           
-%           r1temp(indbp,1) = R1;
-%           p1temp(indbp,1) = p1;
-%           c1wtemp(indbp,1) = c1_w;
-%           v1wprtemp(indbp,1) = v1wpr;
-%           v1wtemp(indbp,1) = v1w;
-%           v1etemp(indbp,1) = v1e;
-%           phi1temp(indbp,1) = phi1;
+          r1temp(indbp,1) = R1;
+          p1temp(indbp,1) = p1;
+          c1wtemp(indbp,1) = c1_w;
+          v1wprtemp(indbp,1) = v1wpr;
+          v1wtemp(indbp,1) = v1w;
+          v1etemp(indbp,1) = v1e;
+          phi1temp(indbp,1) = phi1;
 
           val1temp(indbp,1) = wgt1*v1w + (1-wgt1)*v1e ;
        end
@@ -304,7 +304,7 @@ ss_debt = fzero(fun,bguess);
 disp(['ss_debt = ', num2str(ss_debt)])
 
 % save('./results/autarky_100_dense_smooth.mat');
-save('./results/df1e6_100_dense_discrete.mat');
+% save('./results/df5e2_100_denser_discrete.mat');
 
 
 
